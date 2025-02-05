@@ -1,24 +1,10 @@
-# from django.http import JsonResponse
-# from django.views import View
-# from django.utils.decorators import method_decorator
-# from django.views.decorators.csrf import csrf_exempt
-
-# @method_decorator(csrf_exempt, name='dispatch')
-# class SendOtpView(View):
-#     def get(self, request):
-#         return JsonResponse({"message": "Hello World from GET"})
-
-#     def post(self, request):
-#         return JsonResponse({"message": "Hello World from POST"})
-
-
 import random
 from django.http import JsonResponse
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from core.db_operations.user import save_user, get_user_by_phone, phone_exists, update_user
-from core.utils import send_otp_via_fast2sms
+from core.utils import send_otp_via_fazpass
 from datetime import datetime
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -34,18 +20,27 @@ class SendOtpView(View):
         if phone_exists(phone_number):
             return JsonResponse({"error": "Phone number already exists"}, status=400)
 
-        # Generate a random OTP
-        otp = str(random.randint(100000, 999999))
+        # Send OTP via Fazpass
+        fazpass_response = send_otp_via_fazpass(phone_number)
+        if not fazpass_response.get("status"):
+            return JsonResponse({"error": "Failed to send OTP via Fazpass"}, status=500)
 
-        # Send OTP via Fast2SMS
-        fast2sms_response = send_otp_via_fast2sms(phone_number, otp)
-        if fast2sms_response.get("message") != "success":
-            return JsonResponse({"error": "Failed to send OTP via Fast2SMS"}, status=500)
+        # Extract OTP from response (if needed for development purposes)
+        otp = fazpass_response.get("data", {}).get("otp")
 
         # Save OTP and phone number in the database
         save_user(phone_number, otp)
 
-        return JsonResponse({"message": "OTP sent successfully"})
+        return JsonResponse({
+            "message": "OTP sent successfully",
+            "data": {
+                "id": fazpass_response.get("data", {}).get("id"),
+                "otp_length": fazpass_response.get("data", {}).get("otp_length"),
+                "channel": fazpass_response.get("data", {}).get("channel"),
+                "provider": fazpass_response.get("data", {}).get("provider"),
+                "purpose": fazpass_response.get("data", {}).get("purpose")
+            }
+        })
 
 class VerifyOtpView(View):
     def post(self, request):
