@@ -8,7 +8,7 @@ try:
         password='Qazwsx098712',
         host='147.93.96.233',
         port=27017,
-        authentication_source='admin'  # Try changing this to 'easy_mart' if it fails
+        authentication_source='EasyMart'  # Try changing this to 'easy_mart' if it fails
     )
     print("Connected to MongoDB successfully!")
     
