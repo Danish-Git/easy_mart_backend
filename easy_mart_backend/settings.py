@@ -75,12 +75,43 @@ WSGI_APPLICATION = 'easy_mart_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.dummy',
+#     }
+# }
+
+# MongoDB connection
+# from mongoengine import connect
+# connect('easy_mart', host='mongodb://EasyMart:Qazwsx098712@147.93.96.233:27017/easy_mart')
+
+
+# MongoDB Configuration with MongoEngine
+import mongoengine
+
+MONGO_DATABASE_NAME = 'easy_mart'  # Your MongoDB database name
+MONGO_HOST = '147.93.96.233'       # MongoDB host
+MONGO_PORT = 27017                 # MongoDB port
+MONGO_USERNAME = 'EasyMart'        # MongoDB username
+MONGO_PASSWORD = 'Qazwsx098712'    # MongoDB password
+
+# Connect to MongoDB using MongoEngine
+mongoengine.connect(
+    db=MONGO_DATABASE_NAME,
+    host=MONGO_HOST,
+    port=MONGO_PORT,
+    username=MONGO_USERNAME,
+    password=MONGO_PASSWORD,
+    authentication_source='admin',  # The authentication database (usually 'admin')
+    authentication_mechanism='SCRAM-SHA-1'  # Authentication mechanism
+)
 
 
 # Password validation
