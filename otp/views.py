@@ -43,7 +43,7 @@ class SendOtpView(View):
             }
         })
     
-    
+
 @method_decorator(csrf_exempt, name='dispatch')
 class VerifyOtpView(View):
     def post(self, request):
@@ -51,7 +51,7 @@ class VerifyOtpView(View):
         otp_id = request.POST.get('otp_id')
         otp = request.POST.get('otp')
 
-        if not otp_id or not otp:
+        if not phone_no or not otp:
             return JsonResponse({"error": "Phone number and OTP are required"}, status=400)
 
         user = get_user_by_phone(phone_no, otp_id)
