@@ -42,7 +42,9 @@ class SendOtpView(View):
                 "purpose": fazpass_response.get("data", {}).get("purpose")
             }
         })
-
+    
+    
+@method_decorator(csrf_exempt, name='dispatch')
 class VerifyOtpView(View):
     def post(self, request):
         phone_no = request.POST.get('phone_no')
@@ -55,7 +57,7 @@ class VerifyOtpView(View):
         user = get_user_by_phone(phone_no, otp_id)
 
         # Verify OTP via Fazpass
-        fazpass_response = verify_otp_via_fazpass(otp_id)
+        fazpass_response = verify_otp_via_fazpass(otp_id, otp)
 
         if not fazpass_response.get("status"):
             return JsonResponse({"error": "Failed to verify OTP via Fazpass"}, status=500)
