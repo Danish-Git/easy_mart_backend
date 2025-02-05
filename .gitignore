@@ -1,0 +1,28 @@
+
+# Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.log
+
+# Django
+db.sqlite3
+*.pot
+*.pyc
+
+# Environment
+.env
+venv/
+env/
+*.egg-info/
+
+# VS Code or other IDEs
+.vscode/
+.idea/
+
+# Static files
+/static/
+/media/
+
+# Migrations
+*/migrations/
