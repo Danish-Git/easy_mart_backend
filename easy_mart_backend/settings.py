@@ -109,7 +109,7 @@ mongoengine.connect(
     port=MONGO_PORT,
     username=MONGO_USERNAME,
     password=MONGO_PASSWORD,
-    authentication_source=MONGO_USERNAME,  # The authentication database (usually 'admin')
+    authentication_source=MONGO_DATABASE_NAME,  # The authentication database (usually 'admin')
     authentication_mechanism='SCRAM-SHA-1'  # Authentication mechanism
 )
 
