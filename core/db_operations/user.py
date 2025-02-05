@@ -1,6 +1,6 @@
-from core.models import User  # Import the User model
 from datetime import datetime
 import mongoengine as me
+from .models import User        # Import the User model
 
 # Function to check if user exists by phone number
 def get_user_by_phone(phone_number: str):
