@@ -43,7 +43,16 @@ def send_otp_via_fazpass(phone_number):
     response = requests.post(url, json=payload, headers=headers)
     return response.json()  # Return the response as a dictionary
 
-# Example usage
-# response = send_otp_via_fazpass("+917508884086")
-# print(response)
+def verify_otp_via_fazpass(otp_id, otp):
+    url = "https://api.fazpass.com/v1/otp/verify"
+    payload = {
+        "otp_id": otp_id,
+        "otp": otp
+    }
+    headers = {
+        "Authorization": f"Bearer {FAZPASS_API_KEY}",
+        "Content-Type": "application/json"
+    }
 
+    response = requests.post(url, json=payload, headers=headers)
+    return response.json()  # Return the response as a dictionary

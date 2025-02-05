@@ -5,6 +5,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from core.db_operations.user import save_user, get_user_by_phone, phone_exists, update_user
 from core.utils import send_otp_via_fazpass
+from core.utils import verify_otp_via_fazpass
 from datetime import datetime
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -26,7 +27,7 @@ class SendOtpView(View):
             return JsonResponse({"error": "Failed to send OTP via Fazpass"}, status=500)
 
         # Extract OTP from response (if needed for development purposes)
-        otp = fazpass_response.get("data", {}).get("otp")
+        otp = fazpass_response.get("data", {}).get("id")
 
         # Save OTP and phone number in the database
         save_user(phone_number, otp)
@@ -44,13 +45,21 @@ class SendOtpView(View):
 
 class VerifyOtpView(View):
     def post(self, request):
-        phone_number = request.POST.get('phone_number')
+        phone_no = request.POST.get('phone_no')
+        otp_id = request.POST.get('otp_id')
         otp = request.POST.get('otp')
 
-        if not phone_number or not otp:
+        if not otp_id or not otp:
             return JsonResponse({"error": "Phone number and OTP are required"}, status=400)
 
-        user = get_user_by_phone(phone_number)
+        user = get_user_by_phone(phone_no, otp_id)
+
+        # Verify OTP via Fazpass
+        fazpass_response = verify_otp_via_fazpass(otp_id)
+
+        if not fazpass_response.get("status"):
+            return JsonResponse({"error": "Failed to verify OTP via Fazpass"}, status=500)
+
         if not user:
             return JsonResponse({"error": "User not found"}, status=404)
 
