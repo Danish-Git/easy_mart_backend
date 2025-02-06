@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'otp',
+    'media',
     'user',
 ]
 
@@ -155,3 +156,6 @@ REST_FRAMEWORK = {
 # Define MEDIA_ROOT and MEDIA_URL
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Define allowed categories
+ALLOWED_CATEGORIES = ['profile', 'news', 'shop', 'product', 'ads']

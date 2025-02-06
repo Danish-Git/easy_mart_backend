@@ -15,3 +15,13 @@ class User(me.Document):
     meta = {
         'collection': 'users'  # MongoDB collection name
     }
+
+class Media(me.Document):
+    category = me.StringField(unique=True, required=True)
+    image_name = me.StringField()
+    image_url = me.StringField(required=True)
+    updated_at = me.DateTimeField(default=datetime.utcnow)
+
+    meta = {
+        'collection': 'media'  # MongoDB collection name
+    }    

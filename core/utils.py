@@ -1,5 +1,7 @@
 import requests
 import jwt
+import os
+import time
 from django.conf import settings
 from .models import user
 
@@ -105,3 +107,30 @@ def validate_jwt_token(token):
         return userData
     except (jwt.ExpiredSignatureError, jwt.DecodeError):
         return None    
+
+###########################     Upload Image     ###############################    
+    
+# Define a function to handle image upload based on category
+def upload_photo_by_category(photo, category):
+    if category not in settings.ALLOWED_CATEGORIES:
+        raise ValueError("Invalid category")
+
+    # Define the category directory
+    category_dir = os.path.join(settings.MEDIA_ROOT, category)
+    
+    # Create directory if it doesn't exist
+    os.makedirs(category_dir, exist_ok=True)
+    
+    # Generate a timestamp-based filename
+    timestamp = int(time.time())  # Use current timestamp
+    file_extension = os.path.splitext(photo.name)[1]  # Extract file extension
+    new_image_name = f"{timestamp}{file_extension}"  # New image name
+
+    # Save the file
+    file_path = os.path.join(category_dir, new_image_name)
+    with open(file_path, 'wb') as f:
+        for chunk in photo.chunks():
+            f.write(chunk)
+
+    # Return the image URL and name
+    return os.path.join(settings.MEDIA_URL, category, new_image_name), new_image_name  
