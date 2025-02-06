@@ -11,14 +11,14 @@ def get_user_by_phone(phone_number: str):
 
 # Function to save a new user
 def save_user(phone: str, otp: str, first_name: str, last_name: str, 
-    primary_address: str, profile_photo_id: str, profile_photo_url: str, is_verified: str):
+    primary_address: str, profile_photo: str, profile_photo_url: str, is_verified: str):
     user = User(
         phon = phone,
         otp = otp,
         first_name = first_name if first_name else "",
         last_name = last_name if last_name else "",
         primary_address = primary_address if primary_address else "",
-        profile_photo_id = profile_photo_id if profile_photo_id else "",
+        profile_photo = profile_photo if profile_photo else "",
         profile_photo_url = profile_photo_url if profile_photo_url else "",
         is_verified = is_verified if is_verified is not None else user.is_verified,
         updated_at = datetime.utcnow()
@@ -27,7 +27,7 @@ def save_user(phone: str, otp: str, first_name: str, last_name: str,
 
 # Function to update OTP or user details
 def update_user(phone: str, otp: str, first_name: str = None, last_name: str = None,
-        primary_address: str = None, profile_photo_id: str = None, 
+        primary_address: str = None, profile_photo: str = None, 
         profile_photo_url: str = None, is_verified: bool = False):
     user = get_user_by_phone(phone)
     if user:
@@ -35,7 +35,7 @@ def update_user(phone: str, otp: str, first_name: str = None, last_name: str = N
         user.first_name = first_name if first_name else user.first_name
         user.last_name = last_name if last_name else user.last_name
         user.primary_address = primary_address if primary_address else user.primary_address
-        user.profile_photo_id = profile_photo_id if profile_photo_id else user.profile_photo_id
+        user.profile_photo = profile_photo if profile_photo else user.profile_photo
         user.profile_photo_url = profile_photo_url if profile_photo_url else user.profile_photo_url
         user.is_verified = is_verified if is_verified is not None else user.is_verified
         user.otp = otp if otp else user.otp  # Update OTP only if a new OTP is passed

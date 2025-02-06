@@ -6,8 +6,8 @@ class User(me.Document):
     otp = me.StringField()
     first_name = me.StringField(required=True)
     last_name = me.StringField()
-    primary_address = me.ReferenceField('Address')  # Assuming Address model exists
-    profile_photo_id = me.StringField()  # For storing profile photo ID
+    primary_address = me.ReferenceField('address')  # Assuming Address model exists
+    profile_photo = me.StringField('media')  # For storing profile photo ID
     profile_photo_url = me.StringField()  # For storing profile photo URL
     created_at = me.DateTimeField(default=datetime.utcnow)
     is_verified = me.BooleanField(default=False)
@@ -25,4 +25,16 @@ class Media(me.Document):
 
     meta = {
         'collection': 'media'  # MongoDB collection name
+    }    
+
+class Address(me.Document):
+    address_line1 = me.StringField()
+    address_line2 = me.StringField()
+    city = me.StringField()
+    state = me.StringField()
+    country = me.StringField()
+    postal_code = me.StringField()
+
+    meta = {
+        'collection': 'address'  # MongoDB collection name
     }    

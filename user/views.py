@@ -31,7 +31,7 @@ class UpdateProfileView(View):
         # Get data from the request body
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
-        profile_photo_id = request.POST.get('profile_photo_id')
+        profile_photo = request.POST.get('profile_photo')
         profile_photo_url = request.POST.get('profile_photo_url')
         primary_address = request.POST.get('primary_address')
 
@@ -42,7 +42,7 @@ class UpdateProfileView(View):
         updated_data = {
             'first_name': first_name if first_name else user.first_name,
             'last_name': last_name if last_name else user.last_name,
-            'profile_photo_id': profile_photo_id if profile_photo_id else user.profile_photo_id,
+            'profile_photo': profile_photo if profile_photo else user.profile_photo,
             'profile_photo_url': profile_photo_url if profile_photo_url else user.profile_photo_url,
             'primary_address': primary_address if primary_address else user.primary_address
         }
@@ -57,7 +57,7 @@ class UpdateProfileView(View):
             first_name = updated_data['first_name'],
             last_name = updated_data['last_name'],
             primary_address = updated_data['primary_address'],
-            profile_photo_id = updated_data['profile_photo_id'],
+            profile_photo = updated_data['profile_photo'],
             profile_photo_url = updated_data['profile_photo_url'],
             is_verified = user.is_verified
         )
