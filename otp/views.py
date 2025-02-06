@@ -46,33 +46,33 @@ class SendOtpView(View):
         })
     
 
-@method_decorator(csrf_exempt, name='dispatch')
-class VerifyOtpView(View):
-    def post(self, request):
-        phone_no = request.POST.get('phone_no')
-        otp_id = request.POST.get('otp_id')
-        otp = request.POST.get('otp')
+# @method_decorator(csrf_exempt, name='dispatch')
+# class VerifyOtpView(View):
+#     def post(self, request):
+#         phone_no = request.POST.get('phone_no')
+#         otp_id = request.POST.get('otp_id')
+#         otp = request.POST.get('otp')
 
-        if not phone_no or not otp:
-            return JsonResponse({"error": "Phone number and OTP are required"}, status=400)
+#         if not phone_no or not otp:
+#             return JsonResponse({"error": "Phone number and OTP are required"}, status=400)
 
-        user = get_user_by_phone(phone_no, otp_id)
+#         user = get_user_by_phone(phone_no, otp_id)
 
-        # Verify OTP via Fazpass
-        fazpass_response = verify_otp_via_fazpass(otp_id, otp)
+#         # Verify OTP via Fazpass
+#         fazpass_response = verify_otp_via_fazpass(otp_id, otp)
 
-        if not fazpass_response.get("status"):
-            return JsonResponse({"error": "Failed to verify OTP via Fazpass"}, status=500)
+#         if not fazpass_response.get("status"):
+#             return JsonResponse({"error": "Failed to verify OTP via Fazpass"}, status=500)
 
-        if not user:
-            return JsonResponse({"error": "User not found"}, status=404)
+#         if not user:
+#             return JsonResponse({"error": "User not found"}, status=404)
 
-        if user.otp == otp:
-            # Update the user to mark OTP as verified
-            update_user(phone_number, otp, is_verified=True)
-            return JsonResponse({"message": "OTP verified successfully"})
-        else:
-            return JsonResponse({"error": "Invalid OTP"}, status=400)
+#         if user.otp == otp:
+#             # Update the user to mark OTP as verified
+#             update_user(phone_number, otp, is_verified=True)
+#             return JsonResponse({"message": "OTP verified successfully"})
+#         else:
+#             return JsonResponse({"error": "Invalid OTP"}, status=400)
 
 @method_decorator(csrf_exempt, name='dispatch')
 class VerifyOtpView(View):
