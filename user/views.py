@@ -1,6 +1,6 @@
-# views.py
 from django.http import JsonResponse
 from django.views import View
+from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime
 from core.models.user import update_user, get_user_by_phone
