@@ -54,6 +54,7 @@ def send_otp_via_fazpass(phone_number):
                 "provider": "taptalk",
                 "purpose": "Register"
             }
+        }
         # return JsonResponse({
         #     "status": True,
         #     "message": "Request generated successfully",
