@@ -71,8 +71,6 @@ class VerifyOtpView(View):
         # Extract response data
         fazpass_response_data = json.loads(fazpass_response.content.decode("utf-8"))  # Convert response to dict
 
-        print(f"----> Fazpass Response: {fazpass_response_data}")
-
         # Check if status is not 200
         if fazpass_response_data.get("status") != 200:
             return JsonResponse(fazpass_response_data, status=400)
