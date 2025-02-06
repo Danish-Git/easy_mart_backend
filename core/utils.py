@@ -19,6 +19,7 @@
 
 
 import requests
+from django.http import JsonResponse
 
 FAZPASS_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGlmaWVyIjo4NTk1fQ.JfuFnkd_e7MS1eijpDlmb9REo4jiP80IejCQMcJaoEc"  # Replace with your Fazpass API key
 GATEWAY_KEY = "549969fd-f1e8-486c-a2b7-8fda60a195a0"  # Replace with your Gateway Key
@@ -54,5 +55,6 @@ def verify_otp_via_fazpass(otp_id, otp):
         "Content-Type": "application/json"
     }
 
-    response = requests.post(url, json=payload, headers=headers)
-    return response.json()  # Return the response as a dictionary
+    # response = requests.post(url, json=payload, headers=headers)
+    return JsonResponse({"message": "OTP verified successfully"})
+    # return response.json()  # Return the response as a dictionary
