@@ -1,6 +1,5 @@
 from datetime import datetime
-import mongoengine as me
-from .models import User        # Import the User model
+from ..db_operations.collection import User        # Import the User model
 
 # Function to check if user exists by phone number
 def get_user_by_phone(phone_number: str):
@@ -11,6 +10,7 @@ def save_user(phone: str, otp: str):
     user = User(
         phone=phone,
         otp=otp,
+        first_name="",
         created_at=datetime.utcnow(),
         updated_at=datetime.utcnow()
     )

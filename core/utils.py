@@ -1,5 +1,7 @@
 import requests
-from django.http import JsonResponse
+import jwt
+from django.conf import settings
+from .models import user
 
 FAST2SMS_API_KEY = "qLyM3N5GPJ7xlR2gnvzXHiQBDcU8Wkhd9I4wSsjAaeKtZV1OfrlJVoE09nD5c3YCmjSNd1UFXK2hxs8H"  # Replace with your Fast2SMS API key
 
@@ -90,3 +92,16 @@ def verify_otp_via_fazpass(otp_id, otp):
     else:
         response = requests.post(url, json=payload, headers=headers)
         return response.json()  # Return the response as a dictionary
+
+#########################     Validate JWT Token     #########################
+
+def validate_jwt_token(token):
+    try:
+        decoded_data = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=['HS256'])
+        user_id = decoded_data.get('user_id')
+        if not user_id:
+            return None
+        userData = user.objects(id=user_id).first()  # Find user by ID (from JWT payload)
+        return userData
+    except (jwt.ExpiredSignatureError, jwt.DecodeError):
+        return None    
