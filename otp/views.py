@@ -1,4 +1,6 @@
 import random
+import jwt
+from django.conf import settings
 from django.http import JsonResponse
 from django.views import View
 from django.utils.decorators import method_decorator
@@ -71,3 +73,65 @@ class VerifyOtpView(View):
             return JsonResponse({"message": "OTP verified successfully"})
         else:
             return JsonResponse({"error": "Invalid OTP"}, status=400)
+
+@method_decorator(csrf_exempt, name='dispatch')
+class VerifyOtpView(View):
+    def post(self, request):
+        try:
+            data = json.loads(request.body)  # Use JSON request body
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+        phone_no = data.get('phone_no')
+        otp_id = data.get('otp_id')
+        otp = data.get('otp')
+
+        if not phone_no or not otp or not otp_id:
+            return JsonResponse({"error": "phone_no, otp_id, and otp are required"}, status=400)
+
+        user = get_user_by_phone(phone_no, otp_id)  # Fetch user
+
+        # Verify OTP via Fazpass
+        fazpass_response = verify_otp_via_fazpass(otp_id, otp)
+
+        # Return full response from Fazpass
+        if not fazpass_response.get("status"):
+            return JsonResponse(fazpass_response, status=400)
+
+        if not user:
+            return JsonResponse({"error": "User not found"}, status=404)
+
+        # If OTP is correct, generate JWT token
+        token = generate_jwt_token(user)
+
+        # Update user verification status
+        update_user(phone_no, otp, is_verified=True)
+
+        # Include token in the response
+        fazpass_response["jwt_token"] = token
+        return JsonResponse(fazpass_response)
+
+def verify_otp_via_fazpass(otp_id, otp):
+    url = "https://api.fazpass.com/v1/otp/verify"
+    payload = {
+        "otp_id": otp_id,
+        "otp": otp
+    }
+    headers = {
+        "Authorization": f"Bearer {FAZPASS_API_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    response = requests.post(url, json=payload, headers=headers)
+    return response.json()  # Return response as a dictionary
+
+def generate_jwt_token(user):
+    """Generate a JWT token for the authenticated user"""
+    payload = {
+        "user_id": user.id,
+        "phone_no": user.phone_no,
+        "is_verified": user.is_verified
+    }
+    secret_key = settings.SECRET_KEY  # Use Django's secret key
+    token = jwt.encode(payload, secret_key, algorithm="HS256")
+    return token
