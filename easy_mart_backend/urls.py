@@ -26,7 +26,7 @@ urlpatterns = [
     # path('api/v1/', include('uploads.urls')),
     # path('', include('otp.urls')),
     # Your other URL patterns for the API and other views
-    path('api/v1/', include('easy_mart_backend.urls')),  # Replace 'your_app' with the actual app name
+    path('', include('easy_mart_backend.urls')),  # Replace 'your_app' with the actual app name
     # Any other URLs you may have
 ]
 
