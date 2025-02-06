@@ -50,19 +50,15 @@ class SendOtpView(View):
 @method_decorator(csrf_exempt, name='dispatch')
 class VerifyOtpView(View):
     def post(self, request):
-        try:
-            data = json.loads(request.body)  # Parse JSON request body
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON"}, status=400)
+        
+        phone_number = request.POST.get('phone_number')
+        otp_id = request.POST.get('otp_id')
+        otp = request.POST.get('otp')
 
-        phone_no = data.get('phone_no')
-        otp_id = data.get('otp_id')
-        otp = data.get('otp')
+        if not phone_number or not otp or not otp_id:
+            return JsonResponse({"error": "phone_number, otp_id, and otp are required"}, status=400)
 
-        if not phone_no or not otp or not otp_id:
-            return JsonResponse({"error": "phone_no, otp_id, and otp are required"}, status=400)
-
-        user = get_user_by_phone(phone_no)  # Fetch user
+        user = get_user_by_phone(phone_number)  # Fetch user
 
         # Verify OTP via Fazpass
         fazpass_response = verify_otp_via_fazpass(otp_id, otp)
@@ -83,7 +79,7 @@ class VerifyOtpView(View):
         token = generate_jwt_token(user)
 
         # Update user verification status
-        update_user(phone_no, otp, is_verified=True)
+        update_user(phone_number, otp, is_verified=True)
 
         # Include token in the response
         fazpass_response_data["token"] = token
