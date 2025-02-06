@@ -22,6 +22,7 @@ def update_user(phone: str, otp: str, is_verified: bool = False):
     if user:
         user.otp = str(otp)
         user.is_verified = is_verified
+        user.first_name = ""
         user.updated_at = datetime.utcnow()
         user.save()
     return user
