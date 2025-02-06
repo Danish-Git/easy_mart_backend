@@ -99,7 +99,7 @@ def verify_otp_via_fazpass(otp_id, otp):
 
 def validate_jwt_token(token):
     try:
-        decoded_data = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=['HS256'])
+        decoded_data = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
         user_id = decoded_data.get('user_id')
         if not user_id:
             return None
