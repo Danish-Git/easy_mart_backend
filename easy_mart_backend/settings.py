@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'otp',
-    'media',
+    'media_handler',
     'user',
 ]
 
