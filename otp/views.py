@@ -1,5 +1,6 @@
 import random
 import jwt
+import json
 from django.conf import settings
 from django.http import JsonResponse
 from django.views import View
