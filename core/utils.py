@@ -88,6 +88,8 @@ def verify_otp_via_fazpass(otp_id, otp):
         "Content-Type": "application/json"
     }
 
+    print(otp);
+
     if otp == "0000":
         return {"message": "OTP verified successfully", "status": 200}
         # return JsonResponse({"message": "OTP verified successfully", "status": 200}, status=200, safe=True)
