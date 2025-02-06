@@ -20,10 +20,6 @@ class SendOtpView(View):
         if not phone_number:
             return JsonResponse({"error": "Phone number is required"}, status=400)
 
-        # Check if phone number already exists
-        # if phone_exists(phone_number):
-            # return JsonResponse({"error": "Phone number already exists"}, status=400)
-
         # Send OTP via Fazpass
         fazpass_response = send_otp_via_fazpass(phone_number)
         if not fazpass_response.get("status"):
@@ -32,8 +28,11 @@ class SendOtpView(View):
         # Extract OTP from response (if needed for development purposes)
         otp = fazpass_response.get("data", {}).get("id")
 
-        # Save OTP and phone number in the database (whether phone exists or not)
-        save_user(phone_number, otp)
+        # Save OTP and phone number in the database (when phone not exists)
+        # Check if phone number already exists
+        if not phone_exists(phone_number):
+            save_user(phone_number, otp)
+        
 
         return JsonResponse({
             "message": "OTP sent successfully",
