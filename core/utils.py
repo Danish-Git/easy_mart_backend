@@ -54,6 +54,6 @@ def verify_otp_via_fazpass(otp_id, otp):
         "Authorization": f"Bearer {FAZPASS_API_KEY}",
         "Content-Type": "application/json"
     }
-    return JsonResponse({"message": "OTP verified successfully"}, status=200, safe=True)
+    return JsonResponse({"message": "OTP verified successfully", "status":200}, status=200, safe=True)
     # response = requests.post(url, json=payload, headers=headers)
     # return response.json()  # Return the response as a dictionary
