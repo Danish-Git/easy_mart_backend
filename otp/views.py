@@ -97,9 +97,8 @@ class VerifyOtpView(View):
 
         # Return full response from Fazpass
         if not fazpass_response.get("status"):
-            print(fazpass_response, type(fazpass_response))
-            fazpass_response = {"response": fazpass_response} 
-            print(fazpass_response, type(fazpass_response))
+            fazpass_response_data = fazpass_response.content
+            fazpass_response = {"response": fazpass_response_data} 
             return JsonResponse(fazpass_response, status=400)
 
         if not user:
