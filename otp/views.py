@@ -118,7 +118,7 @@ class SendOtpView(View):
 class VerifyOtpView(View):
     def post(self, request):
         try:
-            data = json.loads(request.body)  # Use JSON request body
+            data = json.loads(request.body)  # Parse JSON request body
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON"}, status=400)
 
@@ -134,19 +134,14 @@ class VerifyOtpView(View):
         # Verify OTP via Fazpass
         fazpass_response = verify_otp_via_fazpass(otp_id, otp)
 
-        # Check if the OTP verification was successful
-        print(f"---->{fazpass_response.get('status')}")
-        if not fazpass_response.get("status"):
-            fazpass_response_data = fazpass_response.content.decode("utf-8")  # Convert bytes to string
-            try:
-                fazpass_response_data = json.loads(fazpass_response_data)  # Convert string to dict
-            except json.JSONDecodeError:
-                return JsonResponse({"error": "Invalid response from Fazpass"}, status=500)
+        # Extract response data
+        fazpass_response_data = json.loads(fazpass_response.content.decode("utf-8"))  # Convert response to dict
 
+        print(f"----> Fazpass Response: {fazpass_response_data}")
+
+        # Check if status is not 200
+        if fazpass_response_data.get("status") != 200:
             return JsonResponse(fazpass_response_data, status=400)
-        
-        # if not fazpass_response.get("status"):
-            # return JsonResponse(fazpass_response_data, status=400)
 
         if not user:
             return JsonResponse({"error": "User not found"}, status=404)
@@ -158,8 +153,8 @@ class VerifyOtpView(View):
         update_user(phone_no, otp, is_verified=True)
 
         # Include token in the response
-        fazpass_response["jwt_token"] = token
-        return JsonResponse(fazpass_response)
+        fazpass_response_data["token"] = token
+        return JsonResponse(fazpass_response_data)
 
 def generate_jwt_token(user):
     """Generate a JWT token for the authenticated user"""
