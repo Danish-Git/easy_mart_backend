@@ -103,7 +103,7 @@ def validate_jwt_token(token):
         user_id = decoded_data.get('user_id')
         if not user_id:
             return None
-        userData = user.objects(id=user_id).first()  # Find user by ID (from JWT payload)
+        userData = user.get_user_by_id(user_id)  # Find user by ID (from JWT payload)
         return userData
     except (jwt.ExpiredSignatureError, jwt.DecodeError):
         return None    

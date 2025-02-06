@@ -1,6 +1,10 @@
 from datetime import datetime
 from ..db_operations.collection import User        # Import the User model
 
+# Function to check if user exists by ID
+def get_user_by_id(user_id: str):
+    return User.objects(id=user_id).first()
+
 # Function to check if user exists by phone number
 def get_user_by_phone(phone_number: str):
     return User.objects(phone=phone_number).first()
