@@ -42,18 +42,18 @@ def update_user(phone: str, otp: str, first_name: str = None, last_name: str = N
         user.updated_at = datetime.utcnow()
         
         if primary_address:
-            address = Address.objects(id=primary_address).first()  # Fetch the Address object
+            address = Address.objects(id = primary_address).first()  # Fetch the Address object
             if address:
                 user.primary_address = primary_address  # Assign the actual Address document to the field
             else:
-                user.primary_address = None
+                user.primary_address = ""
 
         if profile_photo:
-            media = Media.objects(id=profile_photo).first()  # Fetch the Media object
+            media = Media.objects(id = profile_photo).first()  # Fetch the Media object
             if media:
                 user.profile_photo = profile_photo  # Assign the actual Media document to the field
             else:
-                user.profile_photo = None
+                user.profile_photo = ""
 
         user.save()
     return user
