@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+import mongoengine
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -86,7 +87,6 @@ WSGI_APPLICATION = 'easy_mart_backend.wsgi.application'
 # }
 
 # MongoDB Configuration with MongoEngine
-import mongoengine
 
 MONGO_DATABASE_NAME = 'easy_mart'  # Your MongoDB database name
 MONGO_HOST = '147.93.96.233'       # MongoDB host
