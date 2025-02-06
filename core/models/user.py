@@ -32,7 +32,7 @@ def update_user(phone: str, otp: str, first_name: str = None, last_name: str = N
     user = get_user_by_phone(phone)
     if user:
         # Update the fields if they are not None, otherwise keep the existing value
-        user.first_name = first_name if first_name else user.first_name
+        user.first_name = first_name if first_name else user.first_name if user.first_name else "" 
         user.last_name = last_name if last_name else user.last_name
         # user.primary_address = primary_address if primary_address else user.primary_address
         # user.profile_photo = profile_photo if profile_photo else user.profile_photo
