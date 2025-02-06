@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from ..core.models.user import save_user, get_user_by_phone, phone_exists, update_user
+from core.models.user import save_user, get_user_by_phone, phone_exists, update_user
 from core.utils import send_otp_via_fazpass
 from core.utils import verify_otp_via_fazpass
 
