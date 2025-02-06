@@ -112,20 +112,6 @@ class VerifyOtpView(View):
         fazpass_response["jwt_token"] = token
         return JsonResponse(fazpass_response)
 
-def verify_otp_via_fazpass(otp_id, otp):
-    url = "https://api.fazpass.com/v1/otp/verify"
-    payload = {
-        "otp_id": otp_id,
-        "otp": otp
-    }
-    headers = {
-        "Authorization": f"Bearer {FAZPASS_API_KEY}",
-        "Content-Type": "application/json"
-    }
-
-    response = requests.post(url, json=payload, headers=headers)
-    return response.json()  # Return response as a dictionary
-
 def generate_jwt_token(user):
     """Generate a JWT token for the authenticated user"""
     payload = {
