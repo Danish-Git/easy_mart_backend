@@ -44,12 +44,12 @@ def update_user(phone: str, otp: str, first_name: str = None, last_name: str = N
         if primary_address:
             address = Address.objects(id=primary_address).first()  # Fetch the Address object
             if address:
-                user.primary_address = address  # Assign the actual Address document to the field
+                user.primary_address = primary_address  # Assign the actual Address document to the field
 
         if profile_photo:
             media = Media.objects(id=profile_photo).first()  # Fetch the Media object
             if media:
-                user.profile_photo = media  # Assign the actual Media document to the field
+                user.profile_photo = profile_photo  # Assign the actual Media document to the field
 
 
         user.save()
