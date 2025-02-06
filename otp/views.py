@@ -90,7 +90,7 @@ class VerifyOtpView(View):
         if not phone_no or not otp or not otp_id:
             return JsonResponse({"error": "phone_no, otp_id, and otp are required"}, status=400)
 
-        user = get_user_by_phone(phone_no, otp_id)  # Fetch user
+        user = get_user_by_phone(phone_no)  # Fetch user
 
         # Verify OTP via Fazpass
         fazpass_response = verify_otp_via_fazpass(otp_id, otp)
