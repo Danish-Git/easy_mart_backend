@@ -135,7 +135,7 @@ class VerifyOtpView(View):
         fazpass_response = verify_otp_via_fazpass(otp_id, otp)
 
         # Check if the OTP verification was successful
-        print(f"---->{fazpass_response.get('status')}")
+        print(f"---->{fazpass_response}")
         if not fazpass_response.get("status"):
             fazpass_response_data = fazpass_response.content.decode("utf-8")  # Convert bytes to string
             try:
