@@ -23,8 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include('otp.urls')),
     path('api/v1/', include('media_handler.urls')),
-    # path('api/v1/', include('uploads.urls')),
-    # path('', include('otp.urls')),
+    path('api/v1/', include('user.urls')),
 ]
 
 # Add this part to serve media files in development

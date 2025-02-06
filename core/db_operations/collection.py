@@ -7,6 +7,7 @@ class User(me.Document):
     first_name = me.StringField(required=True)
     last_name = me.StringField()
     primary_address = me.ReferenceField('Address')  # Assuming Address model exists
+    profile_photo_id = me.StringField()  # For storing profile photo ID
     profile_photo_url = me.StringField()  # For storing profile photo URL
     created_at = me.DateTimeField(default=datetime.utcnow)
     is_verified = me.BooleanField(default=False)
