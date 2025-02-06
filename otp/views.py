@@ -160,7 +160,7 @@ def generate_jwt_token(user):
     """Generate a JWT token for the authenticated user"""
     payload = {
         "user_id": user.id,
-        "phone_no": user.phone_no,
+        "phone_no": user.phone,
         "is_verified": user.is_verified
     }
     secret_key = settings.SECRET_KEY  # Use Django's secret key
