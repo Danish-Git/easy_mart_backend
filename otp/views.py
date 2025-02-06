@@ -75,6 +75,45 @@ class SendOtpView(View):
 #         else:
 #             return JsonResponse({"error": "Invalid OTP"}, status=400)
 
+# @method_decorator(csrf_exempt, name='dispatch')
+# class VerifyOtpView(View):
+#     def post(self, request):
+#         try:
+#             data = json.loads(request.body)  # Use JSON request body
+#         except json.JSONDecodeError:
+#             return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+#         phone_no = data.get('phone_no')
+#         otp_id = data.get('otp_id')
+#         otp = data.get('otp')
+
+#         if not phone_no or not otp or not otp_id:
+#             return JsonResponse({"error": "phone_no, otp_id, and otp are required"}, status=400)
+
+#         user = get_user_by_phone(phone_no)  # Fetch user
+
+#         # Verify OTP via Fazpass
+#         fazpass_response = verify_otp_via_fazpass(otp_id, otp)
+
+#         # Return full response from Fazpass
+#         if not fazpass_response.get("status"):
+#             fazpass_response_data = fazpass_response.content
+#             fazpass_response = {"response": fazpass_response_data} 
+#             return JsonResponse(fazpass_response, status=400)
+
+#         if not user:
+#             return JsonResponse({"error": "User not found"}, status=404)
+
+#         # If OTP is correct, generate JWT token
+#         token = generate_jwt_token(user)
+
+#         # Update user verification status
+#         update_user(phone_no, otp, is_verified=True)
+
+#         # Include token in the response
+#         fazpass_response["jwt_token"] = token
+#         return JsonResponse(fazpass_response)
+
 @method_decorator(csrf_exempt, name='dispatch')
 class VerifyOtpView(View):
     def post(self, request):
@@ -95,11 +134,11 @@ class VerifyOtpView(View):
         # Verify OTP via Fazpass
         fazpass_response = verify_otp_via_fazpass(otp_id, otp)
 
-        # Return full response from Fazpass
+        # Check if the OTP verification was successful
         if not fazpass_response.get("status"):
-            fazpass_response_data = fazpass_response.content
-            fazpass_response = {"response": fazpass_response_data} 
-            return JsonResponse(fazpass_response, status=400)
+            # Decode the bytes content to a string and then parse it as JSON
+            fazpass_response_data = json.loads(fazpass_response.content.decode('utf-8'))
+            return JsonResponse({"response": fazpass_response_data}, status=400)
 
         if not user:
             return JsonResponse({"error": "User not found"}, status=404)
