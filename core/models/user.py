@@ -1,5 +1,5 @@
 from datetime import datetime
-from ..db_operations.collection import User        # Import the User model
+from ..db_operations.collection import User, Address, Media      # Import the User model
 
 # Function to check if user exists by ID
 def get_user_by_id(user_id: str):
@@ -34,12 +34,21 @@ def update_user(phone: str, otp: str, first_name: str = None, last_name: str = N
         # Update the fields if they are not None, otherwise keep the existing value
         user.first_name = first_name if first_name else user.first_name
         user.last_name = last_name if last_name else user.last_name
-        user.primary_address = primary_address if primary_address else user.primary_address
-        user.profile_photo = profile_photo if profile_photo else user.profile_photo
+        # user.primary_address = primary_address if primary_address else user.primary_address
+        # user.profile_photo = profile_photo if profile_photo else user.profile_photo
         user.profile_photo_url = profile_photo_url if profile_photo_url else user.profile_photo_url
         user.is_verified = is_verified if is_verified is not None else user.is_verified
         user.otp = otp if otp else user.otp  # Update OTP only if a new OTP is passed
         user.updated_at = datetime.utcnow()
+        
+        if primary_address:
+            address = Address.objects(id=primary_address).first()  # Fetch the Address object
+            user.primary_address = address  # Assign the actual Address document to the field
+
+        if profile_photo:
+            media = Media.objects(id=profile_photo).first()  # Fetch the Media object
+            user.profile_photo = media  # Assign the actual Media document to the field
+
 
         user.save()
     return user
