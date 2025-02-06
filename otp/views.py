@@ -136,9 +136,16 @@ class VerifyOtpView(View):
 
         # Check if the OTP verification was successful
         if not fazpass_response.get("status"):
-            # Decode the bytes content to a string and then parse it as JSON
-            fazpass_response_data = json.loads(fazpass_response.content.decode('utf-8'))
-            return JsonResponse({"response": fazpass_response_data}, status=400)
+            fazpass_response_data = fazpass_response.content.decode("utf-8")  # Convert bytes to string
+            try:
+                fazpass_response_data = json.loads(fazpass_response_data)  # Convert string to dict
+            except json.JSONDecodeError:
+                return JsonResponse({"error": "Invalid response from Fazpass"}, status=500)
+
+            return JsonResponse(fazpass_response_data, status=400)
+        
+        # if not fazpass_response.get("status"):
+            # return JsonResponse(fazpass_response_data, status=400)
 
         if not user:
             return JsonResponse({"error": "User not found"}, status=404)
