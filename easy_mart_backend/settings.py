@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'otp',
+    'user',
 ]
 
 MIDDLEWARE = [
@@ -81,17 +83,6 @@ WSGI_APPLICATION = 'easy_mart_backend.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.dummy',
-#     }
-# }
-
-# MongoDB connection
-# from mongoengine import connect
-# connect('easy_mart', host='mongodb://EasyMart:Qazwsx098712@147.93.96.233:27017/easy_mart')
-
 
 # MongoDB Configuration with MongoEngine
 import mongoengine
@@ -160,3 +151,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ]
 }
+
+# Define MEDIA_ROOT and MEDIA_URL
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
