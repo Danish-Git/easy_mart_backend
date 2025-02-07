@@ -8,6 +8,23 @@ from ..db_operations.collections.media_collection import Media
 def save_media(category: str, image_name: str, user: None):
     image_url = os.path.join(settings.MEDIA_URL, category, image_name)
     
+    # Ensure user is valid and get the user ID
+    user_id = user.id if user else None
+
+    # Check if user already has a profile image
+    if category == "profile" and user_id:
+        existing_media = Media.objects(category = "profile", user = user_id).first()
+        if existing_media:
+            # Get old image path from existing media
+            old_image_path = os.path.join(settings.MEDIA_ROOT, existing_media.image_url.lstrip('/'))
+
+            # Delete old image from storage if it exists
+            if os.path.exists(old_image_path):
+                os.remove(old_image_path)
+
+            # Remove old entry from DB
+            existing_media.delete()
+
     media_entry = Media(
         category = category,
         image_name = image_name,

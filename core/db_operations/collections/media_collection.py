@@ -2,7 +2,7 @@ import mongoengine as me
 from datetime import datetime
 
 class Media(me.Document):
-    category = me.StringField(unique=True, required=True)
+    category = me.StringField(required=True)
     image_name = me.StringField()
     image_url = me.StringField(required=True)
     user = me.ReferenceField("User", null=True)
