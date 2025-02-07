@@ -92,7 +92,7 @@ class GetUserDetailsView(View):
             return JsonResponse({"error": "Invalid or expired token"}, status=401)
 
         # Get user by phone
-        phone = user_data.get("phone")
+        phone = user_data.phone
         user = get_user_by_phone(phone)
 
         if not user:
