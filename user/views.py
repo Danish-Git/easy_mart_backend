@@ -75,3 +75,40 @@ class UpdateProfileView(View):
             return JsonResponse({"message": "Profile updated successfully"}, status=200)
 
         return JsonResponse({"error": "Failed to update profile"}, status=400)
+
+@method_decorator(csrf_exempt, name='dispatch')
+class GetUserDetailsView(View):
+    def get(self, request):
+        # Get the JWT token from the Authorization header
+        token = request.headers.get('Authorization')
+        if not token:
+            return JsonResponse({"error": "Token is required"}, status=400)
+
+        # Extract token (assuming it's "Bearer <token>")
+        token = token.split(' ')[1]
+        user_data = validate_jwt_token(token)  # Validate JWT token
+
+        if not user_data:
+            return JsonResponse({"error": "Invalid or expired token"}, status=401)
+
+        # Get user by phone
+        phone = user_data.get("phone")
+        user = get_user_by_phone(phone)
+
+        if not user:
+            return JsonResponse({"error": "User not found"}, status=404)
+
+        # Prepare user details response
+        user_details = {
+            "phone": user.phone,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "profile_photo": user.profile_photo if user.profile_photo else None,
+            "profile_photo_url": user.profile_photo_url if user.profile_photo_url else None,
+            "primary_address": user.primary_address if user.primary_address else None,
+            "is_verified": user.is_verified,
+            "created_at": user.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            "updated_at": user.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+        }
+
+        return JsonResponse({"message": "User details retrieved successfully", "data": user_details}, status=200)
