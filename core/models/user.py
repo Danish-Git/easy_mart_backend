@@ -1,5 +1,7 @@
 from datetime import datetime
-from ..db_operations.collection import User, Address, Media      # Import the User model
+from ..db_operations.collections.user import User
+from ..db_operations.collections.address import Address
+from ..db_operations.collections.media_collection import Media
 
 # Function to check if user exists by ID
 def get_user_by_id(user_id: str):
@@ -17,8 +19,8 @@ def save_user(phone: str, otp: str, first_name: str, last_name: str,
         otp = otp,
         first_name = first_name if first_name else "",
         last_name = last_name if last_name else "",
-        primary_address = primary_address if primary_address else "",
-        profile_photo = profile_photo if profile_photo else "",
+        primary_address = primary_address if primary_address else None,
+        profile_photo = profile_photo if profile_photo else None,
         profile_photo_url = profile_photo_url if profile_photo_url else "",
         is_verified = is_verified if is_verified is not None else user.is_verified,
         updated_at = datetime.utcnow()
@@ -44,16 +46,16 @@ def update_user(phone: str, otp: str, first_name: str = None, last_name: str = N
         if primary_address:
             address = Address.objects(id = primary_address).first()  # Fetch the Address object
             if address:
-                user.primary_address = primary_address  # Assign the actual Address document to the field
+                user.primary_address = address  # Assign the actual Address document to the field
             else:
-                user.primary_address = ""
+                user.primary_address = None 
 
         if profile_photo:
             media = Media.objects(id = profile_photo).first()  # Fetch the Media object
             if media:
-                user.profile_photo = profile_photo  # Assign the actual Media document to the field
+                user.profile_photo = media  # Assign the actual Media document to the field
             else:
-                user.profile_photo = ""
+                user.profile_photo = None
 
         user.save()
     return user

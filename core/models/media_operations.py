@@ -2,8 +2,7 @@ import os
 from datetime import datetime
 from django.conf import settings
 import mongoengine as me
-from ..db_operations.collection import Media        # Import the Media model
-
+from ..db_operations.collections.media_collection import Media
 
 # Function to save media record
 def save_media(category: str, image_name: str):

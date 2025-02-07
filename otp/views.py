@@ -79,7 +79,11 @@ class VerifyOtpView(View):
         token = generate_jwt_token(user)
 
         # Update user verification status
-        update_user(phone_number, otp, is_verified=True)
+        update_user(
+            phone = phone_number, 
+            otp = otp, 
+            is_verified=True
+        )
 
         # Include token in the response
         fazpass_response_data["token"] = token

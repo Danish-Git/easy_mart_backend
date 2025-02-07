@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings 
 from core.utils import upload_photo_by_category
 from core.models.media_operations import save_media
-
+from core.utils import validate_jwt_token  
 
 # Define the base directory for uploads
 UPLOAD_BASE_DIR = settings.MEDIA_ROOT
@@ -15,6 +15,15 @@ UPLOAD_BASE_DIR = settings.MEDIA_ROOT
 @method_decorator(csrf_exempt, name='dispatch')
 class ImageUploadView(View):
     def post(self, request):
+                # Get the JWT token from the Authorization header
+        token = request.headers.get('Authorization')
+        if not token:
+            return JsonResponse({"error": "Token is required"}, status=400)
+
+        # Extract token (assuming it's "Bearer <token>")
+        token = token.split(' ')[1]
+        user_data = validate_jwt_token(token)  # Use the validate_jwt_token function
+
         # Get the category and image from the request
         category = request.POST.get('category')
         image = request.FILES.get('image')
@@ -33,7 +42,12 @@ class ImageUploadView(View):
             image_url, image_name = upload_photo_by_category(image, category)
 
             # Save image details in MongoDB
-            media_entry = save_media(category, image_name)
+            media_entry = save_media(
+                category = category, 
+                image_name = image_name,
+                image_url = image_url,
+                user = user_data
+            )
 
             # Return success response
             return JsonResponse({
