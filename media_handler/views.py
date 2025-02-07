@@ -50,7 +50,7 @@ class ImageUploadView(View):
                     "category": media_entry.category,
                     "image_name": media_entry.image_name,
                     "image_url": media_entry.image_url,
-                    "user": media_entry.populate_user(),
+                    "user_id": str(media_entry.user.id),
                     "uploaded_at": media_entry.updated_at.strftime('%Y-%m-%d %H:%M:%S')
                 }
             })
