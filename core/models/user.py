@@ -12,8 +12,8 @@ def get_user_by_phone(phone_number: str):
     return User.objects(phone=phone_number).first()
 
 # Function to save a new user
-def save_user(phone: str, otp: str, first_name: str, last_name: str, 
-    primary_address: str, profile_photo: str, profile_photo_url: str, is_verified: str):
+def save_user(phone: str, otp: str = None, first_name: str = None, last_name: str = None, 
+    primary_address: str = None, profile_photo: str = None, profile_photo_url: str = None, is_verified: bool = False):
     user = User(
         phon = phone,
         otp = otp,

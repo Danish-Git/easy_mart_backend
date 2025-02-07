@@ -1,5 +1,3 @@
-import os
-import time
 from django.http import JsonResponse
 from django.views import View
 from django.utils.decorators import method_decorator
@@ -9,13 +7,10 @@ from core.utils import upload_photo_by_category
 from core.models.media_operations import save_media
 from core.utils import validate_jwt_token  
 
-# Define the base directory for uploads
-UPLOAD_BASE_DIR = settings.MEDIA_ROOT
-
 @method_decorator(csrf_exempt, name='dispatch')
 class ImageUploadView(View):
     def post(self, request):
-                # Get the JWT token from the Authorization header
+        # Get the JWT token from the Authorization header
         token = request.headers.get('Authorization')
         if not token:
             return JsonResponse({"error": "Token is required"}, status=400)
