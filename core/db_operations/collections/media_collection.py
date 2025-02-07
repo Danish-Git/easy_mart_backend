@@ -1,6 +1,5 @@
 import mongoengine as me
 from datetime import datetime
-from .user import User
 
 class Media(me.Document):
     category = me.StringField(unique=True, required=True)
