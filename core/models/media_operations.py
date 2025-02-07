@@ -5,14 +5,15 @@ import mongoengine as me
 from ..db_operations.collections.media_collection import Media
 
 # Function to save media record
-def save_media(category: str, image_name: str):
+def save_media(category: str, image_name: str, user: None):
     image_url = os.path.join(settings.MEDIA_URL, category, image_name)
     
     media_entry = Media(
-        category=category,
-        image_name=image_name,
-        image_url=image_url,
-        updated_at=datetime.utcnow()
+        category = category,
+        image_name = image_name,
+        image_url = image_url,
+        user = user,
+        updated_at = datetime.utcnow()
     )
     media_entry.save()
     return media_entry

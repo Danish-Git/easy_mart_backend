@@ -63,4 +63,4 @@ class ImageUploadView(View):
         except ValueError as e:
             return JsonResponse({"error": str(e)}, status=400)
         except Exception as e:
-            return JsonResponse({"error": "Internal Server Error"}, status=500)
+            return JsonResponse({"error": "Internal Server Error", "message": e}, status=500)
