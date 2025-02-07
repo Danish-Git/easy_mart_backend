@@ -14,7 +14,8 @@ class Address(me.Document):
     state = me.StringField()
     country = me.StringField()
     postal_code = me.StringField()
-    user = get_user_reference()
+    # user = get_user_reference()
+    user = me.ReferenceField("User", null=True)
     created_at = me.DateTimeField(default=datetime.utcnow)
     updated_at = me.DateTimeField(default=datetime.utcnow)
 
