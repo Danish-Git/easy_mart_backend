@@ -42,7 +42,6 @@ class ImageUploadView(View):
                 image_name = image_name,
                 user = user_data
             )
-
             # Return success response
             return JsonResponse({
                 "message": "Image uploaded successfully",
@@ -51,6 +50,7 @@ class ImageUploadView(View):
                     "category": media_entry.category,
                     "image_name": media_entry.image_name,
                     "image_url": media_entry.image_url,
+                    "user": media_entry.populate_user(),
                     "uploaded_at": media_entry.updated_at.strftime('%Y-%m-%d %H:%M:%S')
                 }
             })
