@@ -15,7 +15,7 @@ def get_user_by_phone(phone_number: str):
 def save_user(phone: str, otp: str = None, first_name: str = None, last_name: str = None, 
     primary_address: str = None, profile_photo: str = None, profile_photo_url: str = None, is_verified: bool = False):
     user = User(
-        phon = phone,
+        phone = phone,
         otp = otp,
         first_name = first_name if first_name else "",
         last_name = last_name if last_name else "",
