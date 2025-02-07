@@ -45,7 +45,6 @@ class ImageUploadView(View):
             media_entry = save_media(
                 category = category, 
                 image_name = image_name,
-                image_url = image_url,
                 user = user_data
             )
 
