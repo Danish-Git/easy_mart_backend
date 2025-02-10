@@ -77,14 +77,11 @@ def update_news_category(category_id: str, title: str = None, slug: str = None, 
             print(f"Parent category {parent_category} not found!")  # Debugging
 
     if cover_image:
-        try:
-            media = Media.objects(id=ObjectId(cover_image)).first()  # Ensure valid ObjectId
-            if media:
-                category.cover_image = media
-            else:
-                print(f"Media with ID {cover_image} not found!")
-        except Exception as e:
-            print(f"Invalid cover_image ID: {e}")  # Debugging
+        media = Media.objects(id = cover_image).first()
+        if media:
+            category.cover_image = media
+        else:
+            print(f"Media with ID {cover_image} not found!")
 
     try:
         category.save()
