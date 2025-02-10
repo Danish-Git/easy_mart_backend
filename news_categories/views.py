@@ -1,8 +1,8 @@
+import json
 from django.http import JsonResponse
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from datetime import datetime
 from core.models.new_categories import create_news_category, update_news_category, delete_news_category, get_news_categories_by_language
 from core.db_operations.collections.news_categories import NewsCategories
 from core.utils import validate_jwt_token
@@ -79,7 +79,7 @@ class UpdateNewsCategories(View):
             keywords = request.POST.getlist("keywords"),
         )
 
-        return JsonResponse({"message": "News category updated successfully", "data": category}, status=200)
+        return JsonResponse({"message": "News category updated successfully", "data": json.loads(category.to_json())}, status=200)
 
 @method_decorator(csrf_exempt, name='dispatch')
 class DeleteNewsCategories(View):
