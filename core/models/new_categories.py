@@ -17,8 +17,8 @@ def create_news_category(title: str, slug: str, description: str = None, icon_ur
     keywords: list = None, language: str = "en", meta_title: str = None,
     meta_description: str = None):
     
-    if get_news_category_by_slug(slug):
-        return None  # Slug must be unique
+    # if get_news_category_by_slug(slug):
+    #     return None  # Slug must be unique
     
     parent = get_news_category_by_id(parent_category) if parent_category else None
     
