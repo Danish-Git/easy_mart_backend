@@ -73,7 +73,7 @@ class UpdateNewsCategories(View):
             icon_url = request.POST.get("icon_url"),
             cover_image = request.POST.get("cover_image"),
             priority = request.POST.get("priority"),
-            status = request.POST.get("status"),
+            status = bool(request.POST.get("status")),
             is_featured = request.POST.get("is_featured"),
             is_trending = request.POST.get("is_trending"),
             keywords = request.POST.getlist("keywords"),
