@@ -77,7 +77,6 @@ class UpdateNewsCategories(View):
             is_featured = request.POST.get("is_featured"),
             is_trending = request.POST.get("is_trending"),
             keywords = request.POST.getlist("keywords"),
-            updated_at = datetime.utcnow()
         )
 
         return JsonResponse({"message": "News category updated successfully", "data": category}, status=200)
