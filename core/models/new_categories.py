@@ -45,37 +45,55 @@ def create_news_category(title: str, slug: str, description: str = None, icon_ur
 
 # Function to update an existing news category
 def update_news_category(category_id: str, title: str = None, slug: str = None, description: str = None,
-    icon_url: str = None, cover_image: str = None, priority: int = None, status: bool = None,
+    icon_url: str = None, cover_image: str = None, priority: int = None, status: bool = True,
     parent_category: str = None, is_featured: bool = None, is_trending: bool = None,
     keywords: list = None, language: str = None, meta_title: str = None,
     meta_description: str = None):
 
     category = get_news_category_by_id(category_id)
-    if category:
-        category.title = title if title else category.title
-        category.slug = slug if slug else category.slug
-        category.description = description if description else category.description
-        category.icon_url = icon_url if icon_url else category.icon_url
-        category.priority = priority if priority is not None else category.priority
-        category.status = status if status is not None else category.status
-        category.parent_category = get_news_category_by_id(parent_category) if parent_category else category.parent_category
-        category.is_featured = is_featured if is_featured is not None else category.is_featured
-        category.is_trending = is_trending if is_trending is not None else category.is_trending
-        category.keywords = keywords if keywords else category.keywords
-        category.language = language if language else category.language
-        category.meta_title = meta_title if meta_title else category.meta_title
-        category.meta_description = meta_description if meta_description else category.meta_description
-        category.updated_at = datetime.utcnow()
+    if not category:
+        print(f"Category with ID {category_id} not found!")  # Debugging
+        return None
 
-        if cover_image:
-            media = Media.objects(id = cover_image).first()  # Fetch the Media object
+    category.title = title if title else category.title
+    category.slug = slug if slug else category.slug
+    category.description = description if description else category.description
+    category.icon_url = icon_url if icon_url else category.icon_url
+    category.priority = int(priority) if priority is not None else category.priority
+    category.status = bool(status) if status is not None else category.status
+    category.is_featured = bool(is_featured) if is_featured is not None else category.is_featured
+    category.is_trending = bool(is_trending) if is_trending is not None else category.is_trending
+    category.keywords = keywords if keywords else category.keywords
+    category.language = language if language else category.language
+    category.meta_title = meta_title if meta_title else category.meta_title
+    category.meta_description = meta_description if meta_description else category.meta_description
+    category.updated_at = datetime.utcnow()
+
+    if parent_category:
+        parent = get_news_category_by_id(parent_category)
+        if parent:
+            category.parent_category = parent
+        else:
+            print(f"Parent category {parent_category} not found!")  # Debugging
+
+    if cover_image:
+        try:
+            media = Media.objects(id=ObjectId(cover_image)).first()  # Ensure valid ObjectId
             if media:
-                category.cover_image = media  # Assign the actual Media document to the field
+                category.cover_image = media
             else:
-                category.cover_image = None
+                print(f"Media with ID {cover_image} not found!")
+        except Exception as e:
+            print(f"Invalid cover_image ID: {e}")  # Debugging
 
+    try:
         category.save()
-    return category
+        print("Category updated successfully!")  # Debugging
+        return category
+    except Exception as e:
+        print(f"Error saving category: {e}")
+        return None
+
 
 # Function to get all news categories
 def get_all_news_categories():
