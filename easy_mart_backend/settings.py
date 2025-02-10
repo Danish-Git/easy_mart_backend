@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'otp',
     'media_handler',
     'user',
+    'news_categories',
 ]
 
 MIDDLEWARE = [

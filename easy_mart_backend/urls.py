@@ -24,6 +24,7 @@ urlpatterns = [
     path('api/v1/', include('otp.urls')),
     path('api/v1/', include('media_handler.urls')),
     path('api/v1/', include('user.urls')),
+    path('api/v1/', include('news_categories.urls')),
 ]
 
 # Add this part to serve media files in development
