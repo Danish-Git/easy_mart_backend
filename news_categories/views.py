@@ -158,6 +158,7 @@ class GetNewsCategories(View):
 class NewsCategoriesByLanguageView(View):
     def get(self, request, language):
 
+        print(language)
         """ Get all categories or a single category by ID """
         token = request.headers.get('Authorization')
         if not token:
