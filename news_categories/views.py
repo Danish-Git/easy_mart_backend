@@ -53,7 +53,7 @@ class CreateNewsCategories(View):
 
 @method_decorator(csrf_exempt, name='dispatch')
 class UpdateNewsCategories(View):
-    def put(self, request):
+    def put(self, request, category_id):
         """ Update an existing news category """
         token = request.headers.get('Authorization')
         if not token:
@@ -66,7 +66,7 @@ class UpdateNewsCategories(View):
 
         
         category = update_news_category(
-            category_id = request.POST.get("category_id"),
+            category_id = category_id,
             title = request.POST.get("title"), 
             slug =request.POST.get("slug"),
             description = request.POST.get("description"),
@@ -158,7 +158,6 @@ class GetNewsCategories(View):
 class NewsCategoriesByLanguageView(View):
     def get(self, request, language):
 
-        print(language)
         """ Get all categories or a single category by ID """
         token = request.headers.get('Authorization')
         if not token:
