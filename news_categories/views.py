@@ -27,6 +27,7 @@ class CreateNewsCategories(View):
         cover_image = request.POST.get("cover_image", "")
         priority = request.POST.get("priority", 0)
         status = request.POST.get("status", True)
+        language = request.POST.get("language", "en")
         is_featured = request.POST.get("is_featured", False)
         is_trending = request.POST.get("is_trending", False)
         keywords = request.POST.getlist("keywords")
@@ -42,11 +43,10 @@ class CreateNewsCategories(View):
             cover_image = cover_image,
             priority = priority,
             status = status,
+            language = language,
             is_featured = is_featured,
             is_trending = is_trending,
             keywords = keywords,
-            created_at = datetime.utcnow(),
-            updated_at = datetime.utcnow(),
         )
 
         return JsonResponse({"message": "News category created successfully", "data": category}, status=201)
