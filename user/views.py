@@ -68,10 +68,6 @@ class UpdateProfileView(View):
             for field, value in updated_data.items():
                 setattr(updated_user, field, value)
 
-            # Update the timestamp
-            updated_user.updated_at = datetime.utcnow()
-            updated_user.save()
-
             return JsonResponse({"message": "Profile updated successfully"}, status=200)
 
         return JsonResponse({"error": "Failed to update profile"}, status=400)
