@@ -100,9 +100,9 @@ class GetUserDetailsView(View):
             "first_name": user.first_name,
             "last_name": user.last_name,
             "profile_photo": {
-                "id": str(user.profile_photo.id),
+                "image_id": str(user.profile_photo.id),
                 "category": user.profile_photo.category,
-                "url": user.profile_photo.image_url
+                "image_url": user.profile_photo.image_url
             } if user.profile_photo else None,
             "profile_photo_url": user.profile_photo_url if user.profile_photo_url else None,
             "primary_address": {
