@@ -6,8 +6,8 @@ class User(me.Document):
     otp = me.StringField()
     first_name = me.StringField(required=True)
     last_name = me.StringField()
-    primary_address = me.ReferenceField("Address", null=True)  # Assuming Address model exists
-    profile_photo = me.ReferenceField("Media", null=True)  # For storing profile photo ID
+    primary_address = me.ReferenceField('Address', required=False)  # Assuming Address model exists
+    profile_photo = me.ReferenceField("Media", required=False)  # For storing profile photo ID
     profile_photo_url = me.StringField()  # For storing profile photo URL
     created_at = me.DateTimeField(default=datetime.utcnow)
     is_verified = me.BooleanField(default=False)
