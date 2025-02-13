@@ -99,9 +99,20 @@ class GetUserDetailsView(View):
             "phone": user.phone,
             "first_name": user.first_name,
             "last_name": user.last_name,
-            "profile_photo": user.profile_photo if user.profile_photo else None,
+            "profile_photo": {
+                "id": str(user.profile_photo.id),
+                "category": user.profile_photo.category,
+                "url": user.profile_photo.image_url
+            } if user.profile_photo else None,
             "profile_photo_url": user.profile_photo_url if user.profile_photo_url else None,
-            "primary_address": user.primary_address if user.primary_address else None,
+            "primary_address": {
+                "id": str(user.primary_address.id),
+                "address_line1": user.primary_address.address_line1,
+                "address_line2": user.primary_address.address_line2,
+                "city": user.primary_address.city,
+                "state": user.primary_address.state,
+                "postal_code": user.primary_address.postal_code
+            } if user.primary_address else None,
             "is_verified": user.is_verified,
             "created_at": user.created_at.strftime('%Y-%m-%d %H:%M:%S'),
             "updated_at": user.updated_at.strftime('%Y-%m-%d %H:%M:%S')
