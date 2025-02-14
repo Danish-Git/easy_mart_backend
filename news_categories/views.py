@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from core.models.new_categories import create_news_category, update_news_category, delete_news_category, get_news_categories_by_language
+from core.models.news_categories import create_news_category, update_news_category, delete_news_category, get_news_categories_by_language
 from core.db_operations.collections.news_categories import NewsCategories
 from core.utils import validate_jwt_token
 

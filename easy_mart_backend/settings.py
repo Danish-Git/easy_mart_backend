@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'media_handler',
     'user',
     'news_categories',
+    'news',
 ]
 
 MIDDLEWARE = [
