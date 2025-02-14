@@ -24,22 +24,27 @@ class CreateNewsView(View):
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON format"}, status = 400)
 
-        news = create_news(
-            title = data.get("title"),
-            description = data.get("description"),
-            cover_image = data.get("cover_image"),
-            priority = data.get("priority", 0),
-            status = data.get("status", True),
-            is_featured = data.get("is_featured", False),
-            is_trending = data.get("is_trending", False),
-            keywords = data.get("keywords", []),
-            language = data.get("language", "en"),
-            category = data.get("category"),
-            meta_title = data.get("meta_title"),
-            meta_description = data.get("meta_description")
-        )
+        try:
+            news = create_news(
+                title = data.get("title"),
+                description = data.get("description"),
+                cover_image = data.get("cover_image"),
+                priority = data.get("priority", 0),
+                status = data.get("status", True),
+                is_featured = data.get("is_featured", False),
+                is_trending = data.get("is_trending", False),
+                keywords = data.get("keywords", []),
+                language = data.get("language", "en"),
+                category = data.get("category"),
+                meta_title = data.get("meta_title"),
+                meta_description = data.get("meta_description")
+            )
+            if news:
+                return JsonResponse({"message": "News created successfully", "data": news}, status = 201)
+        except ImportError as e:
+            return JsonResponse({"error": "Module import error: Circular dependency detected."}, status = 500)
+        except Exception as e:
+            return JsonResponse({"error": "Failed to create news", "details": str(e)}, status = 500)
+        
 
-        if not news:
-            return JsonResponse({"error": "Failed to create news"}, status = 500)
 
-        return JsonResponse({"message": "News created successfully", "data": news}, status = 201)
