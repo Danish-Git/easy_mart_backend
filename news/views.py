@@ -4,11 +4,12 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from core.utils import validate_jwt_token  
-from core.models.news import create_news
+# from core.models.news import create_news
 
 @method_decorator(csrf_exempt, name='dispatch')
 class CreateNewsView(View):
     def post(self, request):
+        from core.models.news import create_news  # Import inside function to avoid circular import
         """Create a new news article"""
         token = request.headers.get('Authorization')
         if not token:
