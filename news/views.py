@@ -51,10 +51,15 @@ class CreateNewsView(View):
                 "message": "News created successfully", 
                 "data": {
                     "id": str(news.id),
-                    "posted_by": news.posted_by,
+                    "posted_by": str(news.posted_by.id),
                     "title": news.title,
                     "description": news.description,
-                    "cover_image": news.cover_image,
+                    "cover_image": {
+                        "image_id": str(news.cover_image.id),
+                        "category": news.cover_image.category,
+                        "image_name": news.cover_image.image_name,
+                        "image_url": news.cover_image.image_url
+                    },
                     "priority": news.priority,
                     "status": news.status,
                     "is_featured": news.is_featured,
