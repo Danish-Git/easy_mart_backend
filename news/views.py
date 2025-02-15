@@ -1,4 +1,5 @@
 import json
+from bson import ObjectId
 from django.http import JsonResponse
 from django.views import View
 from django.utils.decorators import method_decorator
@@ -21,7 +22,7 @@ class CreateNewsView(View):
             return JsonResponse({"error": "Invalid or expired token"}, status = 401)
         
         try:
-            data = json.loads(request.body.decode("utf-8"))  # ✅ Properly parse JSON
+            data = json.loads(request.body.decode("utf-8"))  # Properly parse JSON
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON format"}, status=400)
 
@@ -46,12 +47,28 @@ class CreateNewsView(View):
                 meta_description = data.get("meta_description")
             )
 
-            # ✅ Convert News object to JSON-serializable format
-            news_data = news.to_mongo().to_dict()  # If using MongoDB
-            news_data["id"] = str(news_data["_id"])  # Convert ObjectId to string
-
-            if news_data:
-                return JsonResponse({"message": "News created successfully", "data": news_data}, status = 201)
+            return JsonResponse({
+                "message": "News created successfully", 
+                "data": {
+                    "id": str(news.id),
+                    "posted_by": news.posted_by,
+                    "title": news.title,
+                    "description": news.description,
+                    "cover_image": news.cover_image,
+                    "priority": news.priority,
+                    "status": news.status,
+                    "is_featured": news.is_featured,
+                    "is_trending": news.is_trending,
+                    "keywords": news.keywords,
+                    "language": news.language,
+                    "category": news.category,
+                    "meta_title": news.meta_title,
+                    "meta_description": news.meta_description,
+                    "created_at": news.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                    "uploaded_at": news.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+                }
+            }, status = 201)
+                
         except ImportError as e:
             return JsonResponse({"error": "Module import error: Circular dependency detected."}, status = 500)
         except Exception as e:
