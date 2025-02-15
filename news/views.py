@@ -47,6 +47,16 @@ class CreateNewsView(View):
                 meta_description = data.get("meta_description")
             )
 
+            # Handle cover_image if it's None
+            cover_image_data = None
+            if news.cover_image:
+                cover_image_data = {
+                    "image_id": str(news.cover_image.id),
+                    "category": news.cover_image.category,
+                    "image_name": news.cover_image.image_name,
+                    "image_url": news.cover_image.image_url
+                }
+
             return JsonResponse({
                 "message": "News created successfully", 
                 "data": {
@@ -54,12 +64,7 @@ class CreateNewsView(View):
                     "posted_by": str(news.posted_by.id),
                     "title": news.title,
                     "description": news.description,
-                    "cover_image": {
-                        "image_id": str(news.cover_image.id),
-                        "category": news.cover_image.category,
-                        "image_name": news.cover_image.image_name,
-                        "image_url": news.cover_image.image_url
-                    },
+                    "cover_image": cover_image_data,
                     "priority": news.priority,
                     "status": news.status,
                     "is_featured": news.is_featured,
