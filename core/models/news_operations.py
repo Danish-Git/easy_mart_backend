@@ -1,5 +1,5 @@
 from datetime import datetime
-from core.models.news import News
+from core.models.news_operations import News
 from core.models.media_operations import Media
 from core.models.news_categories import NewsCategories
 

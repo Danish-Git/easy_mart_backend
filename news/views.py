@@ -4,7 +4,7 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from core.utils import validate_jwt_token  
-from core.models.news import create_news
+from core.models.news_operations import create_news
 
 @method_decorator(csrf_exempt, name='dispatch')
 class CreateNewsView(View):
