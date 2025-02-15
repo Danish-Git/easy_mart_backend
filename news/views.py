@@ -4,7 +4,7 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from core.utils import validate_jwt_token  
-from core.models.news_operations import create_news
+from core.models.news_operations import News
 
 @method_decorator(csrf_exempt, name='dispatch')
 class CreateNewsView(View):
@@ -26,7 +26,7 @@ class CreateNewsView(View):
             return JsonResponse({"error": "Invalid JSON format"}, status = 400)
 
         try:
-            news = create_news(
+            news = News.create_news(
                 title = data.get("title"),
                 description = data.get("description"),
                 cover_image = data.get("cover_image"),
