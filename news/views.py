@@ -21,6 +21,8 @@ class CreateNewsView(View):
             return JsonResponse({"error": "Invalid or expired token"}, status = 401)
 
         title = request.POST.get("title")
+        print(title)
+        
         if not title:
             return JsonResponse({"error": "Title is required"}, status=400)
 
