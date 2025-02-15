@@ -20,10 +20,14 @@ class CreateNewsView(View):
         if not user_data:
             return JsonResponse({"error": "Invalid or expired token"}, status = 401)
 
+        title = request.POST.get("title")
+        if not title:
+            return JsonResponse({"error": "Title is required"}, status=400)
+
         try:
             news = create_news(
                 posted_by = str(user_data.id),
-                title = request.POST.get("title"),
+                title = title,
                 description = request.POST.get("description"),
                 cover_image = request.POST.get("cover_image"),
                 priority = request.POST.get("priority", 0),
