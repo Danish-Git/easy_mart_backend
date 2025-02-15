@@ -44,20 +44,14 @@ class CreateNewsView(View):
                 category = data.get("category"),
                 meta_title = data.get("meta_title"),
                 meta_description = data.get("meta_description")
-                # description = request.POST.get("description"),
-                # cover_image = request.POST.get("cover_image"),
-                # priority = request.POST.get("priority", 0),
-                # status = request.POST.get("status", True),
-                # is_featured = request.POST.get("is_featured", False),
-                # is_trending = request.POST.get("is_trending", False),
-                # keywords = request.POST.get("keywords", []),
-                # language = request.POST.get("language", "en"),
-                # category = request.POST.get("category"),
-                # meta_title = request.POST.get("meta_title"),
-                # meta_description = request.POST.get("meta_description")
             )
-            if news:
-                return JsonResponse({"message": "News created successfully", "data": news}, status = 201)
+
+            # ✅ Convert News object to JSON-serializable format
+            news_data = news.to_mongo().to_dict()  # If using MongoDB
+            news_data["id"] = str(news_data["_id"])  # Convert ObjectId to string
+
+            if news_data:
+                return JsonResponse({"message": "News created successfully", "data": news_data}, status = 201)
         except ImportError as e:
             return JsonResponse({"error": "Module import error: Circular dependency detected."}, status = 500)
         except Exception as e:
