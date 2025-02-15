@@ -2,6 +2,9 @@ import mongoengine as me
 from datetime import datetime
 
 class News(me.Document):
+    posted_by = me.ReferenceField("User", required = True)  # User for recognisation who posted news
+    updated_by = me.ReferenceField("User", required = False)  # User for recognisation who edited news
+    verified_by = me.ReferenceField("User", required = False)  # User for recognisation who verified news
     title = me.StringField(required = True)  # Title (e.g., Politics, Sports)
     description = me.StringField()  # Short description of the category
     cover_image = me.ReferenceField("Media", required = False)  # URL for category cover/banner image

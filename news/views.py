@@ -21,24 +21,20 @@ class CreateNewsView(View):
             return JsonResponse({"error": "Invalid or expired token"}, status = 401)
 
         try:
-            data = json.loads(request.body)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON format"}, status = 400)
-
-        try:
             news = create_news(
-                title = data.get("title"),
-                description = data.get("description"),
-                cover_image = data.get("cover_image"),
-                priority = data.get("priority", 0),
-                status = data.get("status", True),
-                is_featured = data.get("is_featured", False),
-                is_trending = data.get("is_trending", False),
-                keywords = data.get("keywords", []),
-                language = data.get("language", "en"),
-                category = data.get("category"),
-                meta_title = data.get("meta_title"),
-                meta_description = data.get("meta_description")
+                posted_by = str(user_data.id)
+                title = request.POST.get("title"),
+                description = request.POST.get("description"),
+                cover_image = request.POST.get("cover_image"),
+                priority = request.POST.get("priority", 0),
+                status = request.POST.get("status", True),
+                is_featured = request.POST.get("is_featured", False),
+                is_trending = request.POST.get("is_trending", False),
+                keywords = request.POST.get("keywords", []),
+                language = request.POST.get("language", "en"),
+                category = request.POST.get("category"),
+                meta_title = request.POST.get("meta_title"),
+                meta_description = request.POST.get("meta_description")
             )
             if news:
                 return JsonResponse({"message": "News created successfully", "data": news}, status = 201)
