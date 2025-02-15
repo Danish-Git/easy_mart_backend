@@ -17,8 +17,8 @@ class CreateNewsView(View):
             return JsonResponse({"error": "Token is required"}, status = 400)
 
         token = token.split(' ')[1]
-        user_data = validate_jwt_token(token)
-        if not user_data:
+        user = validate_jwt_token(token)
+        if not user:
             return JsonResponse({"error": "Invalid or expired token"}, status = 401)
         
         try:
@@ -32,7 +32,7 @@ class CreateNewsView(View):
 
         try:
             news = create_news(
-                posted_by = str(user_data.id),
+                posted_by = str(user.id),
                 title = title,
                 description = data.get("description"),
                 cover_image = data.get("cover_image"),
@@ -46,6 +46,32 @@ class CreateNewsView(View):
                 meta_title = data.get("meta_title"),
                 meta_description = data.get("meta_description")
             )
+
+            # Handle posted_by if it's None
+            user = None
+            if user:
+                user_data = {
+                    "phone": user.phone,
+                    "first_name": user.first_name,
+                    "last_name": user.last_name,
+                    "profile_photo": {
+                        "image_id": str(user.profile_photo.id),
+                        "category": user.profile_photo.category,
+                        "image_url": user.profile_photo.image_url
+                    } if user.profile_photo else None,
+                    "profile_photo_url": user.profile_photo_url if user.profile_photo_url else None,
+                    "primary_address": {
+                        "id": str(user.primary_address.id),
+                        "address_line1": user.primary_address.address_line1,
+                        "address_line2": user.primary_address.address_line2,
+                        "city": user.primary_address.city,
+                        "state": user.primary_address.state,
+                        "postal_code": user.primary_address.postal_code
+                    } if user.primary_address else None,
+                    "is_verified": user.is_verified,
+                    "created_at": user.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                    "updated_at": user.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+                }
 
             # Handle cover_image if it's None
             cover_image_data = None
@@ -61,7 +87,7 @@ class CreateNewsView(View):
                 "message": "News created successfully", 
                 "data": {
                     "id": str(news.id),
-                    "posted_by": str(news.posted_by.id),
+                    "posted_by": user_data,
                     "title": news.title,
                     "description": news.description,
                     "cover_image": cover_image_data,
