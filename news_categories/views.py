@@ -174,7 +174,7 @@ class NewsCategoriesByLanguageView(View):
         category_list = []
         for category in categories:
             category_list.append({
-                "id": str(category.id),
+                "id": str(category["_id"]),
                 "title": category.title,
                 "slug": category.slug,
                 "description": category.description,
