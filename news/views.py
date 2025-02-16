@@ -7,6 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from core.utils import validate_jwt_token  
 from core.models.news_operations import create_news, fetch_news
 from core.models.user import get_user_by_id
+from core.models.media_operations import get_media_by_id
 from core.db_operations.collections.media_collection import Media
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -197,12 +198,14 @@ class FetchNewsView(View):
             # Format cover image
             cover_image_data = None
             if "cover_image" in news and news["cover_image"]:
-                cover_image_data = {
-                    "image_id": str(news["cover_image"]["_id"]),
-                    "category": news["cover_image"]["category"],
-                    "image_name": news["cover_image"]["image_name"],
-                    "image_url": news["cover_image"]["image_url"]
-                }
+                cover_image_obj = get_user_by_id(news["cover_image"])  # Fetch from MongoDB
+                if cover_image_obj:
+                    cover_image_data = {
+                        "image_id": str(cover_image_obj["_id"]),
+                        "category": cover_image_obj.get("category"),
+                        "image_name": cover_image_obj.get("image_name"),
+                        "image_url": cover_image_obj.get("image_url"),
+                    }
 
             # Format category
             news_category = None
