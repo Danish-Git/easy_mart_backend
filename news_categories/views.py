@@ -190,4 +190,4 @@ class NewsCategoriesByLanguageView(View):
                 "updated_at": category.get("updated_at").isoformat() if category.get("updated_at") else None,
             })
 
-        return JsonResponse({"categories": category_list}, status=200)
+        return JsonResponse({"message": "News fetched successfully", "data": category_list}, status = 200)
