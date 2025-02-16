@@ -59,4 +59,4 @@ def fetch_news(language: str, category_id: ObjectId, page: int, page_size: int):
         {"$limit": page_size}    # Limit results per page
     ]
 
-    return list(News.aggregate(pipeline))
+    return list(News.objects.aggregate(pipeline)) 
