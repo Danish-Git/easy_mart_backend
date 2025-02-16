@@ -98,8 +98,29 @@ def get_all_news_categories():
 
 
 # Fetch categories based on the selected language
-def get_news_categories_by_language(language: str):        
-    categories = NewsCategories.objects(language = language, status=True).order_by('-priority')
+def get_news_categories_by_language(language: str):
+    categories = NewsCategories.objects.aggregate([
+        {
+            "$match": { 
+                "language": language, 
+                "status": True 
+            }
+        },
+        {
+            "$addFields": { 
+                "is_featured_first": { 
+                    "$cond": { "if": { "$eq": ["$title", "Feature"] }, "then": 1, "else": 0 } 
+                }
+            }
+        },
+        {
+            "$sort": { 
+                "is_featured_first": -1,  # "Feature" category always first
+                "is_trending": -1,        # Trending categories first
+                "priority": 1             # Lower priority value means higher importance
+            }
+        }
+    ])
     return categories
 
 # Function to delete a news category by ID

@@ -179,7 +179,7 @@ class NewsCategoriesByLanguageView(View):
                 "slug": category.slug,
                 "description": category.description,
                 "icon_url": category.icon_url,
-                "cover_image": str(category.cover_image.id) if category.cover_image else None,
+                # "cover_image": str(category.cover_image.id) if category.cover_image else None,
                 "priority": category.priority,
                 "is_featured": category.is_featured,
                 "is_trending": category.is_trending,
