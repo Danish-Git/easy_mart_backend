@@ -48,7 +48,6 @@ class CreateNewsView(View):
             )
 
             # Handle posted_by if it's None
-            user = None
             if user:
                 user_data = {
                     "phone": user.phone,
