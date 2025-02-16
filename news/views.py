@@ -80,14 +80,17 @@ class CreateNewsView(View):
                 }
 
             # Handle cover_image if it's None
+            print(request.POST.get("category"))
             cover_image_doc = None
             if request.POST.get("category"): 
                 cover_image_temp = Media.objects(id = ObjectId(request.POST.get("category"))).first() 
+                print(cover_image_temp)
                 if cover_image_temp:
                     cover_image_doc = cover_image_temp
                 else:
                     cover_image_doc = None
 
+            print(cover_image_doc)
             if cover_image_doc:
                 cover_image_data = {
                     "image_id": str(cover_image_doc.id),
