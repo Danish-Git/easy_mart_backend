@@ -225,8 +225,8 @@ class FetchNewsView(View):
                         "is_featured": category_obj.is_featured,
                         "is_trending": category_obj.is_trending,
                         "keywords": category_obj.keywords,
-                        "created_at": category_obj.created_at.strftime('%Y-%m-%d %H:%M:%S') if category_obj.get("created_at") else None,
-                        "updated_at": category_obj.updated_at.strftime('%Y-%m-%d %H:%M:%S') if category_obj.get("updated_at") else None,
+                        "created_at": category_obj.created_at.strftime('%Y-%m-%d %H:%M:%S') if category_obj.created_at else None,
+                        "updated_at": category_obj.updated_at.strftime('%Y-%m-%d %H:%M:%S') if category_obj.updated_at else None,
                     }
 
             formatted_news.append({
@@ -244,8 +244,8 @@ class FetchNewsView(View):
                 "category": news_category,
                 "meta_title": news.meta_title,
                 "meta_description": news.meta_description,
-                "created_at": news.created_at.strftime('%Y-%m-%d %H:%M:%S') if "created_at" in news else None,
-                "updated_at": news.updated_at.strftime('%Y-%m-%d %H:%M:%S') if "updated_at" in news else None,
+                "created_at": news.created_at.strftime('%Y-%m-%d %H:%M:%S') if news.created_at else None,
+                "updated_at": news.updated_at.strftime('%Y-%m-%d %H:%M:%S') if news.updated_at else None,
             })
 
         return JsonResponse({"message": "News fetched successfully", "data": formatted_news}, status=200)
