@@ -6,6 +6,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from core.utils import validate_jwt_token  
 from core.models.news_operations import create_news, fetch_news
+from core.models.user import get_user_by_id
 from core.db_operations.collections.media_collection import Media
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -164,78 +165,80 @@ class FetchNewsView(View):
         formatted_news = []
         for news in news_list:
 
-            # Handle posted_by if it's None
+            # Handle posted_by if it's present
             user_data = None
-            if news.posted_by:
-                user_data = {
-                    "phone": news.posted_by.phone,
-                    "first_name": news.posted_by.first_name,
-                    "last_name": news.posted_by.last_name,
-                    "profile_photo": {
-                        "image_id": str(news.posted_by.profile_photo.id),
-                        "category": news.posted_by.profile_photo.category,
-                        "image_url": news.posted_by.profile_photo.image_url
-                    } if news.posted_by.profile_photo else None,
-                    "profile_photo_url": news.posted_by.profile_photo_url if news.posted_by.profile_photo_url else None,
-                    "primary_address": {
-                        "id": str(news.posted_by.primary_address.id),
-                        "address_line1": news.posted_by.primary_address.address_line1,
-                        "address_line2": news.posted_by.primary_address.address_line2,
-                        "city": news.posted_by.primary_address.city,
-                        "state": news.posted_by.primary_address.state,
-                        "postal_code": news.posted_by.primary_address.postal_code
-                    } if news.posted_by.primary_address else None,
-                    "is_verified": news.posted_by.is_verified,
-                    "created_at": news.posted_by.created_at.strftime('%Y-%m-%d %H:%M:%S'),
-                    "updated_at": news.posted_by.updated_at.strftime('%Y-%m-%d %H:%M:%S')
-                }
+            if "posted_by" in news and news["posted_by"]:
+                user = get_user_by_id(news["posted_by"])
+                if user:
+                    user_data = {
+                        "id": str(user.id),
+                        "phone": user.phone,
+                        "first_name": user.first_name,
+                        "last_name": user.last_name,
+                        "profile_photo": {
+                            "image_id": str(user.profile_photo.id),
+                            "category": user.profile_photo.category,
+                            "image_url": user.profile_photo.image_url
+                        } if user.profile_photo else None,
+                        "profile_photo_url": user.profile_photo_url if user.profile_photo_url else None,
+                        "primary_address": {
+                            "id": str(user.primary_address.id),
+                            "address_line1": user.primary_address.address_line1,
+                            "address_line2": user.primary_address.address_line2,
+                            "city": user.primary_address.city,
+                            "state": user.primary_address.state,
+                            "postal_code": user.primary_address.postal_code
+                        } if user.primary_address else None,
+                        "is_verified": user.is_verified,
+                        "created_at": user.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                        "updated_at": user.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+                    }
 
             # Format cover image
             cover_image_data = None
-            if news.cover_image:
+            if "cover_image" in news and news["cover_image"]:
                 cover_image_data = {
-                    "image_id": str(news.cover_image.id),
-                    "category": news.cover_image.category,
-                    "image_name": news.cover_image.image_name,
-                    "image_url": news.cover_image.image_url
+                    "image_id": str(news["cover_image"]["_id"]),
+                    "category": news["cover_image"]["category"],
+                    "image_name": news["cover_image"]["image_name"],
+                    "image_url": news["cover_image"]["image_url"]
                 }
 
             # Format category
             news_category = None
-            if news.category:
+            if "category" in news and news["category"]:
                 news_category = {
-                    "id": str(news.category.id),
-                    "title": news.category.title,
-                    "slug": news.category.slug,
-                    "description": news.category.description,
-                    "icon_url": news.category.icon_url,
-                    # "cover_image": news.category.cover_image,
-                    "priority": news.category.priority,
-                    "status": news.category.status,
-                    "is_featured": news.category.is_featured,
-                    "is_trending": news.category.is_trending,
-                    "keywords": news.category.keywords,
-                    "created_at": news.category.created_at.strftime('%Y-%m-%d %H:%M:%S'),
-                    "updated_at": news.category.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+                    "id": str(news["category"]["_id"]),
+                    "title": news["category"]["title"],
+                    "slug": news["category"]["slug"],
+                    "description": news["category"]["description"],
+                    "icon_url": news["category"]["icon_url"],
+                    "priority": news["category"]["priority"],
+                    "status": news["category"]["status"],
+                    "is_featured": news["category"]["is_featured"],
+                    "is_trending": news["category"]["is_trending"],
+                    "keywords": news["category"]["keywords"],
+                    "created_at": news["category"]["created_at"].strftime('%Y-%m-%d %H:%M:%S'),
+                    "updated_at": news["category"]["updated_at"].strftime('%Y-%m-%d %H:%M:%S')
                 }
 
             formatted_news.append({
-                "id": str(news.id),
+                "id": str(news["_id"]),
                 "posted_by": user_data,
-                "title": news.title,
-                "description": news.description,
+                "title": news["title"],
+                "description": news["description"],
                 "cover_image": cover_image_data,
-                "priority": news.priority,
-                "status": news.status,
-                "is_featured": news.is_featured,
-                "is_trending": news.is_trending,
-                "keywords": news.keywords,
-                "language": news.language,
+                "priority": news["priority"],
+                "status": news["status"],
+                "is_featured": news["is_featured"],
+                "is_trending": news["is_trending"],
+                "keywords": news["keywords"],
+                "language": news["language"],
                 "category": news_category,
-                "meta_title": news.meta_title,
-                "meta_description": news.meta_description,
-                "created_at": news.created_at.strftime('%Y-%m-%d %H:%M:%S'),
-                "uploaded_at": news.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+                "meta_title": news["meta_title"],
+                "meta_description": news["meta_description"],
+                "created_at": news["created_at"].strftime('%Y-%m-%d %H:%M:%S'),
+                "updated_at": news["updated_at"].strftime('%Y-%m-%d %H:%M:%S')
             })
 
         return JsonResponse({"message": "News fetched successfully", "data": formatted_news}, status=200)
