@@ -60,3 +60,12 @@ def fetch_news(language: str, category_id: ObjectId, page: int, page_size: int):
     ]
 
     return list(News.objects.aggregate(pipeline)) 
+
+# Function to fetch counts of all news
+def fetch_news_count(language, category_id):
+    """Returns the total count of news articles for the given language and category."""
+    query = {
+        "language": language,
+        "category": category_id  # Assuming category is stored as an ObjectId
+    }
+    return News.count_documents(query)

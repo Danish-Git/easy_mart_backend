@@ -1,15 +1,14 @@
-import json
+from math import ceil
 from bson import ObjectId
-from django.http import JsonResponse
 from django.views import View
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 from core.utils import validate_jwt_token  
 from core.models.user import get_user_by_id
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from core.models.media_operations import get_media_by_id
 from core.models.news_categories import get_news_category_by_id
-from core.models.news_operations import create_news, fetch_news
-from core.db_operations.collections.media_collection import Media
+from core.models.news_operations import create_news, fetch_news, fetch_news_count
 
 @method_decorator(csrf_exempt, name='dispatch')
 class CreateNewsView(View):
@@ -149,7 +148,7 @@ class FetchNewsView(View):
         token = token.split(' ')[1]
         user = validate_jwt_token(token)
         if not user:
-            return JsonResponse({"error": "Invalid or expired token"}, status=401)
+            return JsonResponse({"error": "Invalid or expired token"}, status = 401)
 
         language = request.GET.get("language", "en")
         category_id = request.GET.get("category")
@@ -157,12 +156,16 @@ class FetchNewsView(View):
         page_size = int(request.GET.get("page_size", 10))
 
         if not category_id:
-            return JsonResponse({"error": "Category ID is required"}, status=400)
+            return JsonResponse({"error": "Category ID is required"}, status = 400)
 
         try:
             category_id = ObjectId(category_id)
         except:
-            return JsonResponse({"error": "Invalid category ID"}, status=400)
+            return JsonResponse({"error": "Invalid category ID"}, status = 400)
+        
+        # Fetch all news articles for the given category and language
+        total_items = fetch_news_count(language, category_id)  # Function to count total news
+        total_pages = ceil(total_items / page_size)
 
         news_list = fetch_news(language, category_id, page, page_size)
 
@@ -248,6 +251,16 @@ class FetchNewsView(View):
                 "updated_at": news["updated_at"].strftime('%Y-%m-%d %H:%M:%S') if "updated_at" in news else None,
             })
 
-        return JsonResponse({"message": "News fetched successfully", "data": formatted_news}, status=200)
+
+        meta_data = None
+        if page_size:
+            meta_data = {
+                "current_page": page,
+                "page_size": page_size,
+                "total_items": total_items,
+                "total_pages": total_pages
+            }
+
+        return JsonResponse({"message": "News fetched successfully", "data": formatted_news, "meta_data": meta_data}, status = 200)
     
 
