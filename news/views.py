@@ -29,6 +29,11 @@ class CreateNewsView(View):
         title = request.POST.get("title")
         if not title:
             return JsonResponse({"error": "Title is required"}, status = 400)
+        
+        cover_image_id = request.POST.get("cover_image")
+        if not cover_image_id:
+            return JsonResponse({"error": "Cover image is required"}, status = 400)
+    
 
         try:
             news = create_news(
