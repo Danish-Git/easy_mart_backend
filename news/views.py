@@ -32,7 +32,7 @@ class CreateNewsView(View):
 
         try:
             news = create_news(
-                posted_by = str(user.id),
+                posted_by = user,
                 title = title,
                 description = request.POST.get("description"),
                 cover_image = request.POST.get("cover_image"),
