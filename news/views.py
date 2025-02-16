@@ -89,9 +89,9 @@ class CreateNewsView(View):
                 }
 
             # Handle category if it's None
-            category = None
+            news_category = None
             if news.category:
-                category = {
+                news_category = {
                     "id": str(news.category.id),
                     "title": news.category.title,
                     "slug": news.category.slug,
@@ -121,7 +121,7 @@ class CreateNewsView(View):
                     "is_trending": news.is_trending,
                     "keywords": news.keywords,
                     "language": news.language,
-                    "category": category,
+                    "category": news_category,
                     "meta_title": news.meta_title,
                     "meta_description": news.meta_description,
                     "created_at": news.created_at.strftime('%Y-%m-%d %H:%M:%S'),
