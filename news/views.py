@@ -6,6 +6,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from core.utils import validate_jwt_token  
 from core.models.news_operations import create_news
+from core.db_operations.collections.media_collection import Media
 
 @method_decorator(csrf_exempt, name='dispatch')
 class CreateNewsView(View):
@@ -79,13 +80,20 @@ class CreateNewsView(View):
                 }
 
             # Handle cover_image if it's None
-            cover_image_data = None
-            if news.cover_image:
+            cover_image_doc = None
+            if request.POST.get("category"): 
+                cover_image_temp = Media.objects(id = ObjectId(request.POST.get("category"))).first() 
+                if cover_image_temp:
+                    cover_image_doc = cover_image_temp
+                else:
+                    cover_image_doc = None
+
+            if cover_image_doc:
                 cover_image_data = {
-                    "image_id": str(news.cover_image.id),
-                    "category": news.cover_image.category,
-                    "image_name": news.cover_image.image_name,
-                    "image_url": news.cover_image.image_url
+                    "image_id": str(cover_image_doc.id),
+                    "category": cover_image_doc.category,
+                    "image_name": cover_image_doc.image_name,
+                    "image_url": cover_image_doc.image_url
                 }
 
             # Handle category if it's None
