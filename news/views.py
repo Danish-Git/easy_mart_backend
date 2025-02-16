@@ -48,6 +48,7 @@ class CreateNewsView(View):
             )
 
             # Handle posted_by if it's None
+            user_data = None
             if user:
                 user_data = {
                     "phone": user.phone,
@@ -82,6 +83,25 @@ class CreateNewsView(View):
                     "image_url": news.cover_image.image_url
                 }
 
+            # Handle category if it's None
+            category = None
+            if news.category:
+                category = {
+                    "id": str(news.category.id),
+                    "title": news.category.title,
+                    "slug": news.category.slug,
+                    "description": news.category.description,
+                    "icon_url": news.category.icon_url,
+                    "cover_image": news.category.cover_image,
+                    "priority": news.category.priority,
+                    "status": news.category.status,
+                    "is_featured": news.category.is_featured,
+                    "is_trending": news.category.is_trending,
+                    "keywords": news.category.keywords,
+                    "created_at": news.category.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                    "updated_at": news.category.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+                }
+
             return JsonResponse({
                 "message": "News created successfully", 
                 "data": {
@@ -96,7 +116,7 @@ class CreateNewsView(View):
                     "is_trending": news.is_trending,
                     "keywords": news.keywords,
                     "language": news.language,
-                    "category": news.category,
+                    "category": category,
                     "meta_title": news.meta_title,
                     "meta_description": news.meta_description,
                     "created_at": news.created_at.strftime('%Y-%m-%d %H:%M:%S'),
