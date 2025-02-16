@@ -204,9 +204,9 @@ class FetchNewsView(View):
                 if cover_image_obj:
                     cover_image_data = {
                         "image_id": str(cover_image_obj),
-                        "category": cover_image_obj.get("category"),
-                        "image_name": cover_image_obj.get("image_name"),
-                        "image_url": cover_image_obj.get("image_url"),
+                        "category": cover_image_obj.category,
+                        "image_name": cover_image_obj.image_name,
+                        "image_url": cover_image_obj.image_url,
                     }
 
             # Format category
@@ -216,36 +216,36 @@ class FetchNewsView(View):
                 if category_obj:
                     news_category = {
                         "id": str(category_obj),
-                        "title": category_obj.get("title"),
-                        "slug": category_obj.get("slug"),
-                        "description": category_obj.get("description"),
-                        "icon_url": category_obj.get("icon_url"),
-                        "priority": category_obj.get("priority"),
-                        "status": category_obj.get("status"),
-                        "is_featured": category_obj.get("is_featured"),
-                        "is_trending": category_obj.get("is_trending"),
-                        "keywords": category_obj.get("keywords"),
-                        "created_at": category_obj.get("created_at").strftime('%Y-%m-%d %H:%M:%S') if category_obj.get("created_at") else None,
-                        "updated_at": category_obj.get("updated_at").strftime('%Y-%m-%d %H:%M:%S') if category_obj.get("updated_at") else None,
+                        "title": category_obj.title,
+                        "slug": category_obj.slug,
+                        "description": category_obj.description,
+                        "icon_url": category_obj.icon_url,
+                        "priority": category_obj.priority,
+                        "status": category_obj.status,
+                        "is_featured": category_obj.is_featured,
+                        "is_trending": category_obj.is_trending,
+                        "keywords": category_obj.keywords,
+                        "created_at": category_obj.created_at.strftime('%Y-%m-%d %H:%M:%S') if category_obj.get("created_at") else None,
+                        "updated_at": category_obj.updated_at.strftime('%Y-%m-%d %H:%M:%S') if category_obj.get("updated_at") else None,
                     }
 
             formatted_news.append({
                 "id": str(news),
                 "posted_by": posted_by,
-                "title": news.get("title"),
-                "description": news.get("description"),
+                "title": news.title,
+                "description": news.description,
                 "cover_image": cover_image_data,
-                "priority": news.get("priority", 0),
-                "status": news.get("status", True),
-                "is_featured": news.get("is_featured", False),
-                "is_trending": news.get("is_trending", False),
-                "keywords": news.get("keywords", []),
-                "language": news.get("language"),
+                "priority": news.priority,
+                "status": news.status,
+                "is_featured": news.is_featured,
+                "is_trending": news.is_trending,
+                "keywords": news.keywords,
+                "language": news.language,
                 "category": news_category,
-                "meta_title": news.get("meta_title"),
-                "meta_description": news.get("meta_description"),
-                "created_at": news["created_at"].strftime('%Y-%m-%d %H:%M:%S') if "created_at" in news else None,
-                "updated_at": news["updated_at"].strftime('%Y-%m-%d %H:%M:%S') if "updated_at" in news else None,
+                "meta_title": news.meta_title,
+                "meta_description": news.meta_description,
+                "created_at": news.created_at.strftime('%Y-%m-%d %H:%M:%S') if "created_at" in news else None,
+                "updated_at": news.updated_at.strftime('%Y-%m-%d %H:%M:%S') if "updated_at" in news else None,
             })
 
         return JsonResponse({"message": "News fetched successfully", "data": formatted_news}, status=200)
