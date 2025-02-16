@@ -5,6 +5,9 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from core.utils import validate_jwt_token  
+from core.models.user import get_user_by_id
+from core.models.media_operations import get_media_by_id
+from core.models.news_categories import get_news_category_by_id
 from core.models.news_operations import create_news, fetch_news
 from core.db_operations.collections.media_collection import Media
 
@@ -165,34 +168,70 @@ class FetchNewsView(View):
 
         formatted_news = []
         for news in news_list:
+            # Handle posted_by if it's present
+            posted_by = None
+            if "posted_by" in news and news["posted_by"]:
+                user = get_user_by_id(news["posted_by"])
+                if user:
+                    posted_by = {
+                        "id": str(user.id),
+                        "phone": user.phone,
+                        "first_name": user.first_name,
+                        "last_name": user.last_name,
+                        "profile_photo": {
+                            "image_id": str(user.profile_photo.id),
+                            "category": user.profile_photo.category,
+                            "image_url": user.profile_photo.image_url
+                        } if user.profile_photo else None,
+                        "profile_photo_url": user.profile_photo_url if user.profile_photo_url else None,
+                        "primary_address": {
+                            "id": str(user.primary_address.id),
+                            "address_line1": user.primary_address.address_line1,
+                            "address_line2": user.primary_address.address_line2,
+                            "city": user.primary_address.city,
+                            "state": user.primary_address.state,
+                            "postal_code": user.primary_address.postal_code
+                        } if user.primary_address else None,
+                        "is_verified": user.is_verified,
+                        "created_at": user.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                        "updated_at": user.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+                    }
+
             # Format cover image
             cover_image_data = None
-            if news.get("cover_image"):
-                cover_image_data = {
-                    "image_id": str(news["cover_image"]),
-                    "category": news["cover_image"].get("category"),
-                    "image_name": news["cover_image"].get("image_name"),
-                    "image_url": news["cover_image"].get("image_url"),
-                }
+            if "cover_image" in news and news["cover_image"]:
+                cover_image_obj = get_media_by_id(news["cover_image"])  # Fetch from MongoDB
+                if cover_image_obj:
+                    cover_image_data = {
+                        "image_id": str(cover_image_obj),
+                        "category": cover_image_obj.get("category"),
+                        "image_name": cover_image_obj.get("image_name"),
+                        "image_url": cover_image_obj.get("image_url"),
+                    }
 
             # Format category
             news_category = None
-            if news.get("category"):
-                news_category = {
-                    "id": str(news["category"]),
-                    "title": news["category"].get("title"),
-                    "slug": news["category"].get("slug"),
-                    "description": news["category"].get("description"),
-                    "icon_url": news["category"].get("icon_url"),
-                    "priority": news["category"].get("priority"),
-                    "status": news["category"].get("status"),
-                    "is_featured": news["category"].get("is_featured"),
-                    "is_trending": news["category"].get("is_trending"),
-                    "keywords": news["category"].get("keywords"),
-                }
+            if "category" in news and news["category"]:
+                category_obj = get_news_category_by_id(news["category"]) 
+                if category_obj:
+                    news_category = {
+                        "id": str(category_obj),
+                        "title": category_obj.get("title"),
+                        "slug": category_obj.get("slug"),
+                        "description": category_obj.get("description"),
+                        "icon_url": category_obj.get("icon_url"),
+                        "priority": category_obj.get("priority"),
+                        "status": category_obj.get("status"),
+                        "is_featured": category_obj.get("is_featured"),
+                        "is_trending": category_obj.get("is_trending"),
+                        "keywords": category_obj.get("keywords"),
+                        "created_at": category_obj.get("created_at").strftime('%Y-%m-%d %H:%M:%S') if category_obj.get("created_at") else None,
+                        "updated_at": category_obj.get("updated_at").strftime('%Y-%m-%d %H:%M:%S') if category_obj.get("updated_at") else None,
+                    }
 
             formatted_news.append({
                 "id": str(news),
+                "posted_by": posted_by,
                 "title": news.get("title"),
                 "description": news.get("description"),
                 "cover_image": cover_image_data,
@@ -212,65 +251,3 @@ class FetchNewsView(View):
         return JsonResponse({"message": "News fetched successfully", "data": formatted_news}, status=200)
     
 
-
-
-    # # Handle posted_by if it's present
-    #         user_data = None
-    #         if "posted_by" in news and news["posted_by"]:
-    #             user = get_user_by_id(news["posted_by"])
-    #             if user:
-    #                 user_data = {
-    #                     "id": str(user.id),
-    #                     "phone": user.phone,
-    #                     "first_name": user.first_name,
-    #                     "last_name": user.last_name,
-    #                     "profile_photo": {
-    #                         "image_id": str(user.profile_photo.id),
-    #                         "category": user.profile_photo.category,
-    #                         "image_url": user.profile_photo.image_url
-    #                     } if user.profile_photo else None,
-    #                     "profile_photo_url": user.profile_photo_url if user.profile_photo_url else None,
-    #                     "primary_address": {
-    #                         "id": str(user.primary_address.id),
-    #                         "address_line1": user.primary_address.address_line1,
-    #                         "address_line2": user.primary_address.address_line2,
-    #                         "city": user.primary_address.city,
-    #                         "state": user.primary_address.state,
-    #                         "postal_code": user.primary_address.postal_code
-    #                     } if user.primary_address else None,
-    #                     "is_verified": user.is_verified,
-    #                     "created_at": user.created_at.strftime('%Y-%m-%d %H:%M:%S'),
-    #                     "updated_at": user.updated_at.strftime('%Y-%m-%d %H:%M:%S')
-    #                 }
-
-    #         # Format cover image
-    #         cover_image_data = None
-    #         if "cover_image" in news and news["cover_image"]:
-    #             cover_image_obj = get_media_by_id(news["cover_image"])  # Fetch from MongoDB
-    #             if cover_image_obj:
-    #                 cover_image_data = {
-    #                     "image_id": str(cover_image_obj["_id"]),
-    #                     "category": cover_image_obj.get("category"),
-    #                     "image_name": cover_image_obj.get("image_name"),
-    #                     "image_url": cover_image_obj.get("image_url"),
-    #                 }
-
-    #         # Format category
-    #         news_category = None
-    #         if "category" in news and news["category"]:
-    #             category_obj = get_news_category_by_id(news["category"]) 
-    #             if category_obj:
-    #                 news_category = {
-    #                     "id": str(category_obj["_id"]),
-    #                     "title": category_obj.get("title"),
-    #                     "slug": category_obj.get("slug"),
-    #                     "description": category_obj.get("description"),
-    #                     "icon_url": category_obj.get("icon_url"),
-    #                     "priority": category_obj.get("priority"),
-    #                     "status": category_obj.get("status"),
-    #                     "is_featured": category_obj.get("is_featured"),
-    #                     "is_trending": category_obj.get("is_trending"),
-    #                     "keywords": category_obj.get("keywords"),
-    #                     "created_at": category_obj.get("created_at").strftime('%Y-%m-%d %H:%M:%S') if category_obj.get("created_at") else None,
-    #                     "updated_at": category_obj.get("updated_at").strftime('%Y-%m-%d %H:%M:%S') if category_obj.get("updated_at") else None,
-    #                 }
