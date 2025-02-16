@@ -10,8 +10,25 @@ def create_news(posted_by: str, title: str, description: str = None, cover_image
     language: str = "en", category: str = None, meta_title: str = None, meta_description: str = None,):
 
     user = get_user_by_id(posted_by)
-    cover_image_doc = Media.objects(id = cover_image).first() if cover_image else None
-    category_doc = NewsCategories.objects(id = category).first() if category else None
+    cover_image_doc = None
+    if cover_image:
+        cover_image_temp = Media.objects(id = cover_image).first()
+        if cover_image_temp:
+            cover_image_doc = cover_image_temp
+        else:
+            cover_image_doc = None
+
+    category_doc = None
+    if category:
+        category_doc_temp = NewsCategories.objects(id = category).first()
+        if category_doc_temp:
+            category_doc = category_doc_temp
+        else:
+            category_doc = None
+
+    # cover_image_doc = Media.objects(id = cover_image).first() if cover_image else None
+
+    # category_doc = NewsCategories.objects(id = category).first() if category else None
 
     news = News(
         posted_by = user,
