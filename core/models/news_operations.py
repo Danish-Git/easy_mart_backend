@@ -68,4 +68,4 @@ def fetch_news_count(language, category_id):
         "language": language,
         "category": category_id  # Assuming category is stored as an ObjectId
     }
-    return News.count_documents(query)
+    return News.objects.filter(language = language, category = category_id).count()
