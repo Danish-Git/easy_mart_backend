@@ -1,4 +1,5 @@
 from datetime import datetime
+from bson.objectid import ObjectId
 from core.db_operations.collections.news import News
 from core.db_operations.collections.media_collection import Media
 from core.db_operations.collections.news_categories import NewsCategories
@@ -11,8 +12,8 @@ def create_news(posted_by: str, title: str, description: str = None, cover_image
 
     user = get_user_by_id(posted_by)
     cover_image_doc = None
-    if cover_image:
-        cover_image_temp = Media.objects(id = cover_image).first()
+    if cover_image: 
+        cover_image_temp = Media.objects(id = ObjectId(cover_image)).first() 
         if cover_image_temp:
             cover_image_doc = cover_image_temp
         else:
