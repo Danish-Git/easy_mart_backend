@@ -175,19 +175,19 @@ class NewsCategoriesByLanguageView(View):
         for category in categories:
             category_list.append({
                 "id": str(category["_id"]),
-                "title": category["title"],
-                "slug": category["slug"],
-                "description": category["description"],
-                "icon_url": category["icon_url"],
+                "title": category.get("title"),  # Use .get() to avoid KeyError
+                "slug": category.get("slug"),
+                "description": category.get("description"),
+                "icon_url": category.get("icon_url"),
                 # "cover_image": str(category.cover_image.id) if category.cover_image else None,
-                "priority": category["priority"],
-                "is_featured": category["is_featured"],
-                "is_trending": category["is_trending"],
-                "keywords": category["keywords"],
-                "meta_title": category["meta_title"],
-                "meta_description": category["meta_description"],
-                "created_at": category.created_at.isoformat(),
-                "updated_at": category.updated_at.isoformat(),
+                "priority": category.get("priority"),
+                "is_featured": category.get("is_featured"),
+                "is_trending": category.get("is_trending"),
+                "keywords": category.get("keywords"),
+                "meta_title": category.get("meta_title"),  # Fix applied
+                "meta_description": category.get("meta_description"),
+                "created_at": category.get("created_at").isoformat() if category.get("created_at") else None,
+                "updated_at": category.get("updated_at").isoformat() if category.get("updated_at") else None,
             })
 
         return JsonResponse({"categories": category_list}, status=200)
