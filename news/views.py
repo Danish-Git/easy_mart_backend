@@ -129,9 +129,7 @@ class CreateNewsView(View):
                     "meta_description": news.meta_description,
                     "created_at": news.created_at.strftime('%Y-%m-%d %H:%M:%S'),
                     "uploaded_at": news.updated_at.strftime('%Y-%m-%d %H:%M:%S')
-                }
-
-            print(newsJson);   
+                } 
 
             return JsonResponse({"message": "News created successfully", "data": newsJson}, status = 201)
                 
