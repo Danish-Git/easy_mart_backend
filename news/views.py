@@ -89,6 +89,8 @@ class CreateNewsView(View):
                     "image_url": news.cover_image.image_url
                 }
 
+            print(cover_image_data)
+
             # Handle category if it's None
             news_category = None
             if news.category:
@@ -98,7 +100,7 @@ class CreateNewsView(View):
                     "slug": news.category.slug,
                     "description": news.category.description,
                     "icon_url": news.category.icon_url,
-                    "cover_image": news.category.cover_image,
+                    # "cover_image": news.category.cover_image,
                     "priority": news.category.priority,
                     "status": news.category.status,
                     "is_featured": news.category.is_featured,
