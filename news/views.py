@@ -230,7 +230,7 @@ class FetchNewsView(View):
                     }
 
             formatted_news.append({
-                "id": str(news),
+                "id": str(news["_id"]),
                 "posted_by": posted_by,
                 "title": news["title"],
                 "description": news["description"],
