@@ -80,25 +80,13 @@ class CreateNewsView(View):
                 }
 
             # Handle cover_image if it's None
-            print(request.POST.get("category"))
-            print(news.cover_image.id)
-            print(news.cover_image.image_url)
-            cover_image_doc = None
-            if request.POST.get("category"): 
-                cover_image_temp = Media.objects(id = ObjectId(news.cover_image.id)).first() 
-                print(cover_image_temp)
-                if cover_image_temp:
-                    cover_image_doc = cover_image_temp
-                else:
-                    cover_image_doc = None
-
-            print(cover_image_doc)
-            if cover_image_doc:
+            cover_image_data = None
+            if news.cover_image:
                 cover_image_data = {
-                    "image_id": str(cover_image_doc.id),
-                    "category": cover_image_doc.category,
-                    "image_name": cover_image_doc.image_name,
-                    "image_url": cover_image_doc.image_url
+                    "image_id": str(news.cover_image.id),
+                    "category": news.cover_image.category,
+                    "image_name": news.cover_image.image_name,
+                    "image_url": news.cover_image.image_url
                 }
 
             # Handle category if it's None
@@ -120,9 +108,9 @@ class CreateNewsView(View):
                     "updated_at": news.category.updated_at.strftime('%Y-%m-%d %H:%M:%S')
                 }
 
-            return JsonResponse({
-                "message": "News created successfully", 
-                "data": {
+            newsJson = None
+            if news:
+                newsJson = {
                     "id": str(news.id),
                     "posted_by": user_data,
                     "title": news.title,
@@ -140,7 +128,10 @@ class CreateNewsView(View):
                     "created_at": news.created_at.strftime('%Y-%m-%d %H:%M:%S'),
                     "uploaded_at": news.updated_at.strftime('%Y-%m-%d %H:%M:%S')
                 }
-            }, status = 201)
+
+            print(newsJson);   
+
+            return JsonResponse({"message": "News created successfully", "data": newsJson}, status = 201)
                 
         except ImportError as e:
             return JsonResponse({"error": "Module import error: Circular dependency detected."}, status = 500)
