@@ -27,10 +27,6 @@ def create_news(posted_by: str, title: str, description: str = None, cover_image
         else:
             category_doc = None
 
-    # cover_image_doc = Media.objects(id = cover_image).first() if cover_image else None
-
-    # category_doc = NewsCategories.objects(id = category).first() if category else None
-
     news = News(
         posted_by = user,
         title = title,
@@ -50,3 +46,17 @@ def create_news(posted_by: str, title: str, description: str = None, cover_image
     )
     news.save()
     return news
+
+
+# Function to fetch paginated news
+def fetch_news(language: str, category_id: ObjectId, page: int, page_size: int):
+    skip = (page - 1) * page_size
+
+    pipeline = [
+        {"$match": {"language": language, "category": category_id, "status": True}},
+        {"$sort": {"_id": -1}},  # Sort by most recent first
+        {"$skip": skip},         # Skip documents for pagination
+        {"$limit": page_size}    # Limit results per page
+    ]
+
+    return list(News.aggregate(pipeline))

@@ -5,13 +5,12 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from core.utils import validate_jwt_token  
-from core.models.news_operations import create_news
+from core.models.news_operations import create_news, fetch_news
 from core.db_operations.collections.media_collection import Media
 
 @method_decorator(csrf_exempt, name='dispatch')
 class CreateNewsView(View):
     def post(self, request):
-        # from core.models.news import create_news  # Import inside function to avoid circular import
         """Create a new news article"""
         token = request.headers.get('Authorization')
         if not token:
@@ -21,11 +20,6 @@ class CreateNewsView(View):
         user = validate_jwt_token(token)
         if not user:
             return JsonResponse({"error": "Invalid or expired token"}, status = 401)
-        
-        # try:
-        #     data = json.loads(request.body.decode("utf-8"))  # Properly parse JSON
-        # except json.JSONDecodeError:
-        #     return JsonResponse({"error": "Invalid JSON format"}, status=400)
 
         title = request.POST.get("title")
         if not title:
@@ -35,7 +29,6 @@ class CreateNewsView(View):
         if not cover_image_id:
             return JsonResponse({"error": "Cover image is required"}, status = 400)
     
-
         try:
             news = create_news(
                 posted_by = str(user.id),
@@ -140,3 +133,80 @@ class CreateNewsView(View):
         
 
 
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class FetchNewsView(View):
+    def get(self, request):
+        """Fetch paginated news articles"""
+        token = request.headers.get('Authorization')
+        if not token:
+            return JsonResponse({"error": "Token is required"}, status=400)
+
+        token = token.split(' ')[1]
+        user = validate_jwt_token(token)
+        if not user:
+            return JsonResponse({"error": "Invalid or expired token"}, status=401)
+
+        language = request.GET.get("language", "en")
+        category_id = request.GET.get("category")
+        page = int(request.GET.get("page", 1))
+        page_size = int(request.GET.get("page_size", 10))
+
+        if not category_id:
+            return JsonResponse({"error": "Category ID is required"}, status=400)
+
+        try:
+            category_id = ObjectId(category_id)
+        except:
+            return JsonResponse({"error": "Invalid category ID"}, status=400)
+
+        news_list = fetch_news(language, category_id, page, page_size)
+
+        formatted_news = []
+        for news in news_list:
+            # Format cover image
+            cover_image_data = None
+            if news.get("cover_image"):
+                cover_image_data = {
+                    "image_id": str(news["cover_image"]["_id"]),
+                    "category": news["cover_image"].get("category"),
+                    "image_name": news["cover_image"].get("image_name"),
+                    "image_url": news["cover_image"].get("image_url"),
+                }
+
+            # Format category
+            news_category = None
+            if news.get("category"):
+                news_category = {
+                    "id": str(news["category"]["_id"]),
+                    "title": news["category"].get("title"),
+                    "slug": news["category"].get("slug"),
+                    "description": news["category"].get("description"),
+                    "icon_url": news["category"].get("icon_url"),
+                    "priority": news["category"].get("priority"),
+                    "status": news["category"].get("status"),
+                    "is_featured": news["category"].get("is_featured"),
+                    "is_trending": news["category"].get("is_trending"),
+                    "keywords": news["category"].get("keywords"),
+                }
+
+            formatted_news.append({
+                "id": str(news["_id"]),
+                "title": news.get("title"),
+                "description": news.get("description"),
+                "cover_image": cover_image_data,
+                "priority": news.get("priority", 0),
+                "status": news.get("status", True),
+                "is_featured": news.get("is_featured", False),
+                "is_trending": news.get("is_trending", False),
+                "keywords": news.get("keywords", []),
+                "language": news.get("language"),
+                "category": news_category,
+                "meta_title": news.get("meta_title"),
+                "meta_description": news.get("meta_description"),
+                "created_at": news["created_at"].strftime('%Y-%m-%d %H:%M:%S') if "created_at" in news else None,
+                "updated_at": news["updated_at"].strftime('%Y-%m-%d %H:%M:%S') if "updated_at" in news else None,
+            })
+
+        return JsonResponse({"message": "News fetched successfully", "data": formatted_news}, status=200)
