@@ -8,6 +8,7 @@ from core.utils import validate_jwt_token
 from core.models.news_operations import create_news, fetch_news
 from core.models.user import get_user_by_id
 from core.models.media_operations import get_media_by_id
+from core.models.news_categories import get_news_category_by_id
 from core.db_operations.collections.media_collection import Media
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -198,7 +199,7 @@ class FetchNewsView(View):
             # Format cover image
             cover_image_data = None
             if "cover_image" in news and news["cover_image"]:
-                cover_image_obj = get_user_by_id(news["cover_image"])  # Fetch from MongoDB
+                cover_image_obj = get_media_by_id(news["cover_image"])  # Fetch from MongoDB
                 if cover_image_obj:
                     cover_image_data = {
                         "image_id": str(cover_image_obj["_id"]),
@@ -210,20 +211,23 @@ class FetchNewsView(View):
             # Format category
             news_category = None
             if "category" in news and news["category"]:
-                news_category = {
-                    "id": str(news["category"]["_id"]),
-                    "title": news["category"]["title"],
-                    "slug": news["category"]["slug"],
-                    "description": news["category"]["description"],
-                    "icon_url": news["category"]["icon_url"],
-                    "priority": news["category"]["priority"],
-                    "status": news["category"]["status"],
-                    "is_featured": news["category"]["is_featured"],
-                    "is_trending": news["category"]["is_trending"],
-                    "keywords": news["category"]["keywords"],
-                    "created_at": news["category"]["created_at"].strftime('%Y-%m-%d %H:%M:%S'),
-                    "updated_at": news["category"]["updated_at"].strftime('%Y-%m-%d %H:%M:%S')
-                }
+                category_obj = get_news_category_by_id(news["category"]) 
+                if category_obj:
+                    news_category = {
+                        "id": str(category_obj["_id"]),
+                        "title": category_obj.get("title"),
+                        "slug": category_obj.get("slug"),
+                        "description": category_obj.get("description"),
+                        "icon_url": category_obj.get("icon_url"),
+                        "priority": category_obj.get("priority"),
+                        "status": category_obj.get("status"),
+                        "is_featured": category_obj.get("is_featured"),
+                        "is_trending": category_obj.get("is_trending"),
+                        "keywords": category_obj.get("keywords"),
+                        "created_at": category_obj.get("created_at").strftime('%Y-%m-%d %H:%M:%S') if category_obj.get("created_at") else None,
+                        "updated_at": category_obj.get("updated_at").strftime('%Y-%m-%d %H:%M:%S') if category_obj.get("updated_at") else None,
+                    }
+
 
             formatted_news.append({
                 "id": str(news["_id"]),
