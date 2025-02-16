@@ -178,23 +178,23 @@ class FetchNewsView(View):
                         "phone": user.phone,
                         "first_name": user.first_name,
                         "last_name": user.last_name,
-                        "profile_photo": {
-                            "image_id": str(user.profile_photo.id),
-                            "category": user.profile_photo.category,
-                            "image_url": user.profile_photo.image_url
-                        } if user.profile_photo else None,
+                        # "profile_photo": {
+                        #     "image_id": str(user.profile_photo.id),
+                        #     "category": user.profile_photo.category,
+                        #     "image_url": user.profile_photo.image_url
+                        # } if user.profile_photo else None,
                         "profile_photo_url": user.profile_photo_url if user.profile_photo_url else None,
-                        "primary_address": {
-                            "id": str(user.primary_address.id),
-                            "address_line1": user.primary_address.address_line1,
-                            "address_line2": user.primary_address.address_line2,
-                            "city": user.primary_address.city,
-                            "state": user.primary_address.state,
-                            "postal_code": user.primary_address.postal_code
-                        } if user.primary_address else None,
-                        "is_verified": user.is_verified,
-                        "created_at": user.created_at.strftime('%Y-%m-%d %H:%M:%S'),
-                        "updated_at": user.updated_at.strftime('%Y-%m-%d %H:%M:%S')
+                        # "primary_address": {
+                        #     "id": str(user.primary_address.id),
+                        #     "address_line1": user.primary_address.address_line1,
+                        #     "address_line2": user.primary_address.address_line2,
+                        #     "city": user.primary_address.city,
+                        #     "state": user.primary_address.state,
+                        #     "postal_code": user.primary_address.postal_code
+                        # } if user.primary_address else None,
+                        # "is_verified": user.is_verified,
+                        # "created_at": user.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                        # "updated_at": user.updated_at.strftime('%Y-%m-%d %H:%M:%S')
                     }
 
             # Format cover image
@@ -203,7 +203,7 @@ class FetchNewsView(View):
                 cover_image_obj = get_media_by_id(news["cover_image"])  # Fetch from MongoDB
                 if cover_image_obj:
                     cover_image_data = {
-                        "image_id": str(cover_image_obj),
+                        "image_id": str(cover_image_obj.id),
                         "category": cover_image_obj.category,
                         "image_name": cover_image_obj.image_name,
                         "image_url": cover_image_obj.image_url,
@@ -215,7 +215,7 @@ class FetchNewsView(View):
                 category_obj = get_news_category_by_id(news["category"]) 
                 if category_obj:
                     news_category = {
-                        "id": str(category_obj),
+                        "id": str(category_obj.id),
                         "title": category_obj.title,
                         "slug": category_obj.slug,
                         "description": category_obj.description,
