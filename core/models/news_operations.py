@@ -69,3 +69,22 @@ def fetch_news_count(language, category_id):
         "category": category_id  # Assuming category is stored as an ObjectId
     }
     return News.objects.filter(language = language, category = category_id).count()
+
+
+# Function to fetch paginated trending news
+def fetch_trending_news(language: str, category_id: ObjectId, page: int, page_size: int):
+    skip = (page - 1) * page_size
+
+    pipeline = [
+        {"$match": {"language": language, "category": category_id, "status": True, "is_trending": True}},
+        {"$sort": {"_id": -1}},  # Sort by most recent first
+        {"$skip": skip},          # Skip documents for pagination
+        {"$limit": page_size}     # Limit results per page
+    ]
+
+    return list(News.objects.aggregate(pipeline))
+
+# Function to fetch counts of all trending news
+def fetch_trending_news_count(language, category_id):
+    """Returns the total count of trending news articles for the given language and category."""
+    return News.objects.filter(language=language, category=category_id, status=True, is_trending=True).count()
