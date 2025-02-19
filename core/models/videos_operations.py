@@ -1,5 +1,5 @@
 from datetime import datetime
-from bson import ObjectId
+from core.db_operations.collections.videos_collection import Videos
 from core.models.user import get_user_by_id
 from core.models.media_operations import get_media_by_id
 
@@ -22,7 +22,7 @@ def create_video(posted_by: str, title: str, video_url: str, description: str = 
     #     if category_doc_temp:
     #         category_doc = category_doc_temp
 
-    video = Video(
+    video = Videos(
         posted_by = user,
         title = title,
         video_url = video_url,
