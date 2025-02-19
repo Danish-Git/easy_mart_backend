@@ -135,9 +135,6 @@ class CreateNewsView(View):
             return JsonResponse({"error": "Failed to create news", "details": str(e)}, status = 500)
         
 
-
-
-
 @method_decorator(csrf_exempt, name='dispatch')
 class FetchNewsView(View):
     def get(self, request):
