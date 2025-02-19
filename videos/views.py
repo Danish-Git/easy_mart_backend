@@ -2,9 +2,8 @@ from django.views import View
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from datetime import datetime
 from core.utils import validate_jwt_token
-from core.models.videos import create_video  
+from core.models.videos_operations import create_video  
 
 @method_decorator(csrf_exempt, name='dispatch')
 class CreateVideoView(View):
@@ -12,20 +11,20 @@ class CreateVideoView(View):
         """Create a new video"""
         token = request.headers.get('Authorization')
         if not token:
-            return JsonResponse({"error": "Token is required"}, status=400)
+            return JsonResponse({"error": "Token is required"}, status = 400)
 
         token = token.split(' ')[1]
         user = validate_jwt_token(token)
         if not user:
-            return JsonResponse({"error": "Invalid or expired token"}, status=401)
+            return JsonResponse({"error": "Invalid or expired token"}, status = 401)
 
         title = request.POST.get("title")
         if not title:
-            return JsonResponse({"error": "Title is required"}, status=400)
+            return JsonResponse({"error": "Title is required"}, status = 400)
 
         video_url = request.POST.get("video_url")
         if not video_url:
-            return JsonResponse({"error": "Video URL is required"}, status=400)
+            return JsonResponse({"error": "Video URL is required"}, status = 400)
 
         try:
             video = create_video(
@@ -97,8 +96,8 @@ class CreateVideoView(View):
                 "updated_at": video.updated_at.strftime('%Y-%m-%d %H:%M:%S')
             }
 
-            return JsonResponse({"message": "Video created successfully", "data": video_json}, status=201)
+            return JsonResponse({"message": "Video created successfully", "data": video_json}, status = 201)
 
         except Exception as e:
-            return JsonResponse({"error": "Failed to create video", "details": str(e)}, status=500)
+            return JsonResponse({"error": "Failed to create video", "details": str(e)}, status = 500)
 
