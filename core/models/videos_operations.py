@@ -54,9 +54,9 @@ def fetch_videos(page: int, page_size: int):
         {"$limit": page_size}  # Limit per page
     ]
 
-    return list(Video.objects.aggregate(pipeline))
+    return list(Videos.objects.aggregate(pipeline))
 
 # Function to fetch total count of videos
 def fetch_videos_count():
     """Returns total count of active videos"""
-    return Video.objects.filter(status=True).count()
+    return Videos.objects.filter(status=True).count()
