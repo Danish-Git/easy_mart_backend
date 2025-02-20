@@ -42,3 +42,21 @@ def create_video(posted_by: str, title: str, video_url: str, description: str = 
     )
     video.save()
     return video
+
+# Function to fetch video which are available for the useres
+def fetch_videos(page: int, page_size: int):
+    skip = (page - 1) * page_size
+
+    pipeline = [
+        {"$match": {"status": True}},  # Only active videos
+        {"$sort": {"is_trending": -1, "_id": -1}},  # Trending first, then most recent
+        {"$skip": skip},  # Pagination
+        {"$limit": page_size}  # Limit per page
+    ]
+
+    return list(Video.objects.aggregate(pipeline))
+
+# Function to fetch total count of videos
+def fetch_videos_count():
+    """Returns total count of active videos"""
+    return Video.objects.filter(status=True).count()

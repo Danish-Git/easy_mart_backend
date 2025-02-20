@@ -1,9 +1,11 @@
+from math import ceil
 from django.views import View
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from core.utils import validate_jwt_token
-from core.models.videos_operations import create_video  
+from core.models.videos_operations import create_video, fetch_videos, fetch_videos_count
+from core.models.media_operations import get_media_by_id
 
 @method_decorator(csrf_exempt, name='dispatch')
 class CreateVideoView(View):
@@ -101,3 +103,65 @@ class CreateVideoView(View):
         except Exception as e:
             return JsonResponse({"error": "Failed to create video", "details": str(e)}, status = 500)
 
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class FetchVideosView(View):
+    def get(self, request):
+        """Fetch paginated videos list"""
+        token = request.headers.get('Authorization')
+        if not token:
+            return JsonResponse({"error": "Token is required"}, status=400)
+
+        token = token.split(' ')[1]
+        user = validate_jwt_token(token)
+        if not user:
+            return JsonResponse({"error": "Invalid or expired token"}, status=401)
+
+        page = int(request.GET.get("page", 1))
+        page_size = int(request.GET.get("page_size", 10))
+
+        # Fetch total count of videos
+        total_items = fetch_videos_count()
+        total_pages = ceil(total_items / page_size)
+
+        # Fetch paginated videos
+        videos_list = fetch_videos(page, page_size)
+
+        formatted_videos = []
+        for video in videos_list:
+            # Format cover image
+            cover_image_data = None
+            if "cover_image" in video and video["cover_image"]:
+                cover_image_obj = get_media_by_id(video["cover_image"])  # Fetch from MongoDB
+                if cover_image_obj:
+                    cover_image_data = {
+                        "image_id": str(cover_image_obj.id),
+                        "category": cover_image_obj.category,
+                        "image_name": cover_image_obj.image_name,
+                        "image_url": cover_image_obj.image_url,
+                    }
+
+            formatted_videos.append({
+                "id": str(video["_id"]),
+                "title": video.get("title"),
+                "description": video.get("description"),
+                "cover_image": cover_image_data,
+                "video_url": video.get("video_url"),
+                "status": video.get("status", True),
+                "is_trending": video.get("is_trending", False),
+                "keywords": video.get("keywords", []),
+                "meta_title": video.get("meta_title"),
+                "meta_description": video.get("meta_description"),
+                "created_at": video["created_at"].strftime('%Y-%m-%d %H:%M:%S') if "created_at" in video else None,
+                "updated_at": video["updated_at"].strftime('%Y-%m-%d %H:%M:%S') if "updated_at" in video else None,
+            })
+
+        meta_data = {
+            "current_page": page,
+            "page_size": page_size,
+            "total_items": total_items,
+            "total_pages": total_pages
+        }
+
+        return JsonResponse({"message": "Videos fetched successfully", "data": formatted_videos, "meta_data": meta_data}, status=200)
